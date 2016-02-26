@@ -4,26 +4,26 @@ Documentation for Anovia's REST API for partner lead submission, on boarding, an
 ---
 ## Index
 
-[Introduction](#Introduction)
+[Introduction](#introduction)
 
-[Versioning](#Versioning)
+[Versioning](#versioning)
 
-[Terms](#Terms)
+[Terms](#terms)
 
-[Authentication](#Authentication)
+[Authentication](#authentication)
 
-[Endpoints](#Endpoints)
+[Endpoints](#endpoints)
 
-- [Leads](#Leads)
-- [Merchants](#Merchants)
-- [Residuals](#Residuals)
-- [Statements](#Statements)
-- [Fees](#Fees)
-- [Deposits](#Deposits)
-- [Batches](#Batches)
-- [Transactions](#Transactions)
+- [Leads](#leads)
+- [Merchants](#merchants)
+- [Residuals](#residuals)
+- [Statements](#statements)
+- [Fees](#fees)
+- [Deposits](#deposits)
+- [Batches](#batches)
+- [Transactions](#transactions)
 
-[Query Syntax](#Query Syntax)
+[Query Syntax](#query-syntax)
 
 ---
 ## Introduction
@@ -370,7 +370,6 @@ invoiceNumber                           |nvarchar(8)         |True        |
 
 ---
 ## Query Syntax
----
 
 The following query params are supported on all routes that return data as a collection of objects:
 
