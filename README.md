@@ -8,7 +8,7 @@ Documentation for Anovia's REST API for partner lead submission, on boarding, an
 
 [Versioning](#versioning)
 
-[Terms](#terms)
+[Terms](#glossary-of-terms)
 
 [Authentication](#authentication)
 
