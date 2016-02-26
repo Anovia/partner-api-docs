@@ -120,7 +120,7 @@ For sample requests, responses, and code, please check out our Postman collectio
 ### Lead Schema
 
 Name                                    |Type                |Allow Null  |Required    |Description
-----------------------------------------|--------------------|------------|--------------------------
+----------------------------------------|--------------------|------------|------------|-------------
 id                                      |nvarchar(13)        |False       |-           |Anovia's unique identifier for lead records
 externalId                              |nvarchar(36)        |True        |False       |Your own unique identifier for leads submitted to Anovia
 businessName                            |nvarchar(140)       |True        |True        |The name of the business you are referring
