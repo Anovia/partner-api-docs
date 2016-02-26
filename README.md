@@ -3,32 +3,30 @@ Documentation for Anovia's REST API for partner lead submission, on boarding, an
 
 ---
 ## Index
----
 
-[Introduction](#Introduction)
+[Introduction](#introduction)
 
-[Versioning](#Versioning)
+[Versioning](#versioning)
 
-[Terms](#Terms)
+[Terms](#glossary-of-terms)
 
-[Authentication](#Authentication)
+[Authentication](#authentication)
 
-[Endpoints](#Endpoints)
+[Endpoints](#endpoints)
 
-- [Leads](#Leads)
-- [Merchants](#Merchants)
-- [Residuals](#Residuals)
-- [Statements](#Statements)
-- [Fees](#Fees)
-- [Deposits](#Deposits)
-- [Batches](#Batches)
-- [Transactions](#Transactions)
+- [Leads](#leads)
+- [Merchants](#merchants)
+- [Residuals](#residuals)
+- [Statements](#statements)
+- [Fees](#fees)
+- [Deposits](#deposits)
+- [Batches](#batches)
+- [Transactions](#transactions)
 
-[Query Syntax](#Query Syntax)
+[Query Syntax](#query-syntax)
 
 ---
 ## Introduction
----
 
 Anovia's Partner API is designed to provide a simple way for parters to access data surrounding their merchant portfolio. The target audience for this document is technical teams of partners who want to consume merchant processing data for use in their own applications.
 
@@ -46,7 +44,6 @@ For development, we also provide a developer sandbox that can be accessed with y
 
 ---
 ## Versioning
----
 
 The Anovia Partner API uses [semantic versioning](http://semver.org).
 
@@ -58,7 +55,6 @@ Version numbers can be interpreted as MAJOR.MINOR.PATCH.
 
 ---
 ## Glossary of Terms
----
 
 __Lead__: A referral submitted to Anovia by a partner. A lead is still in the sales cycle, and is being actively worked by Anovia Sales. A lead can have multiple merchants.
 
@@ -78,7 +74,6 @@ __Transaction__: A settled transaction between cardholder and merchant. Please n
 
 ---
 ## Authentication
-___
 
 > NOTE: For security purposes, all requests to Anovia's API must be made via HTTPS
 
@@ -104,7 +99,6 @@ To test authentication, you can submit a GET request to {{host}}/api. If you rec
 
 ---
 ## Endpoints
----
 
 A list of available endpoints, and schemas for all available objects is provided here.
 
@@ -126,7 +120,7 @@ For sample requests, responses, and code, please check out our Postman collectio
 ### Lead Schema
 
 Name                                    |Type                |Allow Null  |Required    |Description
-----------------------------------------|--------------------|------------|--------------------------
+----------------------------------------|--------------------|------------|------------|-------------
 id                                      |nvarchar(13)        |False       |-           |Anovia's unique identifier for lead records
 externalId                              |nvarchar(36)        |True        |False       |Your own unique identifier for leads submitted to Anovia
 businessName                            |nvarchar(140)       |True        |True        |The name of the business you are referring
@@ -187,7 +181,7 @@ Lost                  |The merchant has decided not to process payments with Ano
 ### Merchant Schema
 
 Name                                    |Type                |Allow Null  |Description
-----------------------------------------|--------------------|--------------------------
+----------------------------------------|--------------------|------------|---------------
 id                                      |nvarchar(13)        |False       |Anovia's unique identifier for merchant records
 lead                                    |nvarchar(13)        |False       |The id of the related lead
 externalId                              |nvarchar(36)        |True        |The identifier provided when you submitted the related Lead
@@ -217,7 +211,7 @@ Residual records are a snapshot of a merchant's processing volume and fees for o
 ### Residual Schema
 
 Name                                    |Type                |Allow Null  |Description
-----------------------------------------|--------------------|------------|-----------
+----------------------------------------|--------------------|------------|-------------
 id                                      |nvarchar(13)        |False       |Anovia's unique identifier for residual records
 merchant                                |nvarchar(13)        |False       |The id of the related merchant
 externalId                              |nvarchar(36)        |True        |The identifier provided when you submitted the related Lead
@@ -376,7 +370,6 @@ invoiceNumber                           |nvarchar(8)         |True        |
 
 ---
 ## Query Syntax
----
 
 The following query params are supported on all routes that return data as a collection of objects:
 
