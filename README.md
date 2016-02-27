@@ -137,9 +137,9 @@ submitterEmail                          |nvarchar(140)       |True        |False
 channel                                 |nvarchar(36)        |False       |True        |The sales channel to which this lead should be added. Possible values will be provided to you by your relationship manager
 tags                                    |array(tags)         |True        |False       |Any tags you wish to add to a lead for reporting purposes
 status                                  |nvarchar(36)        |True        |-           |The current status of the lead (see below for values)
-received                                |datetime(8)         |False       |-           |(YYYY-MM-DD) The date the lead was received 
-signed                                  |datetime(8)         |True        |-           |(YYYY-MM-DD) The date the lead signed their processing agreement
-lost                                    |datetime(8)         |True        |-           |(YYYY-MM-DD) THe date the lead was lost (hopefully this is null!)
+receivedDate                            |datetime(8)         |False       |-           |(YYYY-MM-DD) The date the lead was received 
+signedDate                              |datetime(8)         |True        |-           |(YYYY-MM-DD) The date the lead signed their processing agreement
+lostDate                                |datetime(8)         |True        |-           |(YYYY-MM-DD) THe date the lead was lost (hopefully this is null!)
 
 ## Lead Statuses
 
@@ -193,7 +193,7 @@ countryCode                             |nchar(2)            |False       |The t
 channel                                 |nvarchar(36)        |False       |The sales channel you provided for the merchant's Lead
 tags                                    |array(tags)         |True        |Any tags you provided when creating the merchant's Lead
 status                                  |nvarchar(36)        |True        |The current status of the merchant (see below for values)
-created                                 |datetime(8)         |False       |(YYYY-MM-DD) The date the merchant record was created 
+createdDate                             |datetime(8)         |False       |(YYYY-MM-DD) The date the merchant record was created 
 signedDate                              |datetime(8)         |True        |(YYYY-MM-DD) The date the merchant's application was signed
 approvedDate                            |datetime(8)         |True        |(YYYY-MM-DD) The date the merchant was approved by underwriting
 activatedDate                           |datetime(8)         |True        |(YYYY-MM-DD) The date the merchant processed their first transaction
@@ -281,7 +281,7 @@ id                                      |nvarchar(13)        |False       |
 merchant                                |nvarchar(13)        |False       |The id of the related merchant
 statement                               |nvarchar(13)        |False       |The id of the related statement
 transactionAmount                       |decimal(8)          |False       |
-transactionCount                        |int(8)          	 |False       |
+transactionCount                        |int(8)          	   |False       |
 rate                                    |decimal(8)          |False       |
 rateType                                |varchar(20)         |False       |
 description                             |varchar(1000)       |False       |
@@ -332,15 +332,15 @@ id                                      |nvarchar(13)        |False       |
 merchant                                |nvarchar(13)        |False       |The id of the related merchant
 statement                               |nvarchar(13)        |False       |The id of the related statement
 batchDate                               |datetime(8)         |False       |
-totalTransactionAmount                  |decimal(8)          |False       |
-totalCreditTransactionAmount            |decimal(8)          |False       |
-totalDebitTransactionAmount             |decimal(8)          |False       |
-totalAuthorizationAmount                |decimal(8)          |False       |
-totalCreditAuthorizationAmount          |decimal(8)          |False       |
-totalDebitAuthorizationAmount           |decimal(8)          |False       |
-totalCount                              |int(4)              |False       |
-totalCreditCount                        |int(4)              |False       |
-totalDebitCount                         |int(4)              |False       |
+transactionAmount                       |decimal(8)          |False       |
+creditTransactionAmount                 |decimal(8)          |False       |
+debitTransactionAmount                  |decimal(8)          |False       |
+authorizationAmount                     |decimal(8)          |False       |
+creditAuthorizationAmount               |decimal(8)          |False       |
+debitAuthorizationAmount                |decimal(8)          |False       |
+transactionCount                        |int(4)              |False       |
+creditTransactionCount                  |int(4)              |False       |
+debitTransactionCount                   |int(4)              |False       |
 
 ## Transactions
 
