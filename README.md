@@ -126,18 +126,20 @@ externalId                              |nvarchar(36)        |True        |False
 businessName                            |nvarchar(140)       |True        |True        |The name of the business you are referring
 contactName                             |nvarchar(140)       |True        |True        |The first and last name of the decision maker for the business
 contactPhone                            |nvarchar(10)        |True        |True        |The decision maker's phone number
+contactPhoneExtension                   |nvarchar(8)         |True        |True        |The decision maker's phone number extension
 contactEmail                            |nvarchar(140)       |True        |True        |The decision maker's email address
 bestTimeToContact                       |nvarchar(255)       |True        |False       |The best time and/or day to contact the decision maker
 submitterId                             |nvarchar(36)        |True        |False       |An id you provide for tracking your agent/employee who submitted the lead 
 submitterName                           |nvarchar(140)       |True        |False       |The name of the agent/employee who submitted the lead
 submitterPhone                          |nvarchar(10)        |True        |False       |The phone number of the agent/employee who submitted the lead
+submitterPhoneExtension                 |nvarchar(8)         |True        |False       |The phone number extension of the agent/employee who submitted the lead
 submitterEmail                          |nvarchar(140)       |True        |False       |The email address of the agent/employee who submitted the lead
 channel                                 |nvarchar(36)        |False       |True        |The sales channel to which this lead should be added. Possible values will be provided to you by your relationship manager
 tags                                    |array(tags)         |True        |False       |Any tags you wish to add to a lead for reporting purposes
 status                                  |nvarchar(36)        |True        |-           |The current status of the lead (see below for values)
-received                                |datetime(8)         |False       |-           |(YYYY-MM-DD) The date the lead was received 
-signed                                  |datetime(8)         |True        |-           |(YYYY-MM-DD) The date the lead signed their processing agreement
-lost                                    |datetime(8)         |True        |-           |(YYYY-MM-DD) THe date the lead was lost (hopefully this is null!)
+receivedDate                            |datetime(8)         |False       |-           |(YYYY-MM-DD) The date the lead was received 
+signedDate                              |datetime(8)         |True        |-           |(YYYY-MM-DD) The date the lead signed their processing agreement
+lostDate                                |datetime(8)         |True        |-           |(YYYY-MM-DD) THe date the lead was lost (hopefully this is null!)
 
 ## Lead Statuses
 
@@ -191,11 +193,11 @@ countryCode                             |nchar(2)            |False       |The t
 channel                                 |nvarchar(36)        |False       |The sales channel you provided for the merchant's Lead
 tags                                    |array(tags)         |True        |Any tags you provided when creating the merchant's Lead
 status                                  |nvarchar(36)        |True        |The current status of the merchant (see below for values)
-created                                 |datetime(8)         |False       |(YYYY-MM-DD) The date the merchant record was created 
-signed                                  |datetime(8)         |True        |(YYYY-MM-DD) The date the merchant's application was signed
-approved                                |datetime(8)         |True        |(YYYY-MM-DD) The date the merchant was approved by underwriting
-activated                               |datetime(8)         |True        |(YYYY-MM-DD) The date the merchant processed their first transaction
-deactivated                             |datetime(8)         |True        |(YYYY-MM-DD) The date the merchant closed their account (hopefully this is null!)
+createdDate                             |datetime(8)         |False       |(YYYY-MM-DD) The date the merchant record was created 
+signedDate                              |datetime(8)         |True        |(YYYY-MM-DD) The date the merchant's application was signed
+approvedDate                            |datetime(8)         |True        |(YYYY-MM-DD) The date the merchant was approved by underwriting
+activatedDate                           |datetime(8)         |True        |(YYYY-MM-DD) The date the merchant processed their first transaction
+deactivatedDate                         |datetime(8)         |True        |(YYYY-MM-DD) The date the merchant closed their account (hopefully this is null!)
 
 
 ## Residuals
@@ -251,7 +253,6 @@ Name                                    |Type                |Allow Null  |Descr
 ----------------------------------------|--------------------|------------|-----------
 id                                      |nvarchar(13)        |False       |
 merchant                                |nvarchar(13)        |False       |The id of the related merchant
-statementIdentifier                     |nvarchar(128)       |False       |
 statementPeriod                         |int(4)              |False       |
 statementStartDate                      |datetime(8)         |False       |
 statementEndDate                        |datetime(8)         |False       |
@@ -280,13 +281,14 @@ id                                      |nvarchar(13)        |False       |
 merchant                                |nvarchar(13)        |False       |The id of the related merchant
 statement                               |nvarchar(13)        |False       |The id of the related statement
 transactionAmount                       |decimal(8)          |False       |
-transactionCount                        |decimal(8)          |False       |
+transactionCount                        |int(8)          	   |False       |
 rate                                    |decimal(8)          |False       |
-rateType                                |decimal(8)          |False       |
-description                             |decimal(8)          |False       |
+rateType                                |varchar(20)         |False       |
+description                             |varchar(1000)       |False       |
 paid                                    |decimal(8)          |False       |
 due                                     |decimal(8)          |False       |
 total                                   |decimal(8)          |False       |
+feeType                                 |varchar(20)         |False       |
 
 ## Deposits
 
@@ -305,8 +307,9 @@ Name                                    |Type                |Allow Null  |
 id                                      |nvarchar(13)        |False       |
 merchant                                |nvarchar(13)        |False       |The id of the related merchant
 statement                               |nvarchar(13)        |False       |The id of the related statement
-achPeriodType                           |int(4)              |False       |
 depositDate                             |datetime(8)         |False       |
+batchDate                               |datetime(8)         |False       |
+transactionDate                         |datetime(8)         |False       |
 routingNumber                           |nvarchar(9)         |True        |
 accountNumber                           |nvarchar(40)        |True        |
 depositAmount                           |decimal(8)          |False       |
@@ -329,15 +332,15 @@ id                                      |nvarchar(13)        |False       |
 merchant                                |nvarchar(13)        |False       |The id of the related merchant
 statement                               |nvarchar(13)        |False       |The id of the related statement
 batchDate                               |datetime(8)         |False       |
-totalTransactionAmount                  |decimal(8)          |False       |
-totalCreditTransactionAmount            |decimal(8)          |False       |
-totalDebitTransactionAmount             |decimal(8)          |False       |
-totalAuthorizationAmount                |decimal(8)          |False       |
-totalCreditAuthorizationAmount          |decimal(8)          |False       |
-totalDebitAuthorizationAmount           |decimal(8)          |False       |
-totalCount                              |int(4)              |False       |
-totalCreditCount                        |int(4)              |False       |
-totalDebitCount                         |int(4)              |False       |
+transactionAmount                       |decimal(8)          |False       |
+creditTransactionAmount                 |decimal(8)          |False       |
+debitTransactionAmount                  |decimal(8)          |False       |
+authorizationAmount                     |decimal(8)          |False       |
+creditAuthorizationAmount               |decimal(8)          |False       |
+debitAuthorizationAmount                |decimal(8)          |False       |
+transactionCount                        |int(4)              |False       |
+creditTransactionCount                  |int(4)              |False       |
+debitTransactionCount                   |int(4)              |False       |
 
 ## Transactions
 
@@ -366,7 +369,6 @@ terminalIdentifier                      |nvarchar(128)       |True        |
 merchantIdentifier                      |nvarchar(128)       |True        |
 processorIdentifier                     |nvarchar(128)       |True        |
 issuerIdentifier                        |nvarchar(128)       |True        |
-invoiceNumber                           |nvarchar(8)         |True        |
 
 ---
 ## Query Syntax
