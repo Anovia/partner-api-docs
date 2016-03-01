@@ -103,15 +103,6 @@ Tokens are valid for 1 hour. If you make a request with an invalid token, you wi
 
 To test authentication, you can submit a GET request to {{host}}/api. If you receive a 200 reponse code, you're doing it right.
 
----
-## API Samples
-
-A list of available endpoints, and schemas for all available objects is provided here.
-
-For sample requests, responses, and code, please check out our Postman collection:
-
-[![Run in Postman](https://run.pstmn.io/button.png)](https://www.getpostman.com/run-collection/7b0ee3c91ba0a64a8c59)
-
 ### Response Format
 
 The Anovia API uses [JSONAPI](http://jsonapi.org) to format responses. 
