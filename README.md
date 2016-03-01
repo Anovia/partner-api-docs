@@ -1,4 +1,4 @@
-# partner-api-docs v0.2.0
+# partner-api-docs v0.3.0
 Documentation for Anovia's REST API for partner lead submission, on boarding, and reporting.
 
 ---
@@ -12,7 +12,11 @@ Documentation for Anovia's REST API for partner lead submission, on boarding, an
 
 [Authentication](#authentication)
 
-[Endpoints](#endpoints)
+[API Samples](#api-samples)
+
+[Errors](#errors)
+
+[Schemas](#schemas)
 
 - [Leads](#leads)
 - [Merchants](#merchants)
@@ -50,8 +54,10 @@ The Anovia Partner API uses [semantic versioning](http://semver.org).
 Version numbers can be interpreted as MAJOR.MINOR.PATCH. 
 
 - MAJOR version is incremented for incompatible API changes.
-- MINOR version is incremented for additional functionality or fields that are backwards-compatible. __NOTE:__ The introduction of new fields is regarded as a backwards-compatible change.
+- MINOR version is incremented for additional functionality or fields that are backwards-compatible.
 - PATCH version is incremented for backwards-compatible bug fixes.
+
+> NOTE: The introduction of new fields is regarded as a backwards-compatible change, and thus only requires incrementing the MINOR version.
 
 ---
 ## Glossary of Terms
@@ -98,7 +104,7 @@ Tokens are valid for 1 hour. If you make a request with an invalid token, you wi
 To test authentication, you can submit a GET request to {{host}}/api. If you receive a 200 reponse code, you're doing it right.
 
 ---
-## Endpoints
+## API Samples
 
 A list of available endpoints, and schemas for all available objects is provided here.
 
@@ -106,36 +112,183 @@ For sample requests, responses, and code, please check out our Postman collectio
 
 [![Run in Postman](https://run.pstmn.io/button.png)](https://www.getpostman.com/run-collection/7b0ee3c91ba0a64a8c59)
 
+### Response Format
+
+The Anovia API uses [JSONAPI](http://jsonapi.org) to format responses. 
+
+Request an object by id:
+
+    Request: GET /api/v1/merchants/123abc456def7
+    
+    Response:
+    {
+      "data": {                               // for individual resources fetched by :id, the top-level data element is an object
+        "type": "merchants",                  // the type of object being returned
+        "id": "123abc456def7",                // the :id of the object
+        "attributes": {                       // all data fields for the object are placed in 'attributes'
+          "mid": "8546123412341234",
+          "dbaName": "Charlie's Chocolates"
+          ...
+        }
+      },
+      "links": {
+        "self": "/api/v1/merchants/123abc456def7"
+      }
+    }
+    
+Request a collection of objects
+    
+    Request: GET /api/v1/merchants/
+    
+    Response:
+    {
+      "data": [                               // for collections of resources, the top-level data element is an array of objects
+        {
+          "type": "merchants",
+          "id": "123abc456def7",
+          "attributes": {
+            "mid": "8546123412341234",
+            "dbaName": "Charlie's Chocolates"
+            ...
+          }
+        }, {
+          "type": "merchants",
+          "id": "456def789ghi0",
+          "attributes": {
+            "mid": "8546567856785678",
+            "dbaName": "Joe's Diner"
+            ...
+          }
+        }
+      ],
+      "links": {
+        "self": "/api/v1/merchants/?include=page[limit]=100&page[offset]=0",     // the current query
+        "first": "/api/v1/merchants/?include=page[limit]=100&page[offset]=0",    // the first page
+        "last": "/api/v1/merchants/?include=page[limit]=100&page[offset]=100",   // the last page
+        "prev": null,                                                            // the previous page
+        "next": "/api/v1/merchants/?include=page[limit]=100&page[offset]=100"    // the next page
+      },
+      "meta": {
+        "count": 115,      // the total number of records matching your query
+        "limit": 100,      // the max number of records that could be returned
+        "offset": 0        // the number of records skipped
+      }
+    }
+
+Use the 'include' query param to retreive related parent records. Related resources will be returned in the top-level 'included' element.
+A 'relationships' element will be added to the resource object so that you can link the two.
+
+    Request: GET /api/v1/merchants/123abc456def7?include=lead
+    
+    Response:
+    
+    {
+      "data": {
+        "type": "merchants",
+        "id": "123abc456def7",
+        "attributes": {
+          "mid": "8546123412341234",
+          "dbaName": "Charlie's Chocolates"
+          ...
+        },
+        "relationships": {                    // the resource now contains a 'relationships' attribute
+          "lead": {                           // the name of the relationship will match the value of your 'include' query param
+            "data": {
+              "type": "leads",                // relationships are linked to included records
+              "id": "789ghi012jkl3"           // by unique combination of 'type' & 'id'
+            }
+          }
+        }
+      },
+      "included": [                           // included is always an array
+        {
+          "type": "leads",
+          "id": "789ghi012jkl3",
+          "attributes": {
+            "externalIdentifier": "your-custom-identifier",
+            "businessName": "Chuck's Chocs"
+            ...
+          }
+        }
+      ],
+      "links": {
+        "self": "/api/v1/merchants/?include=lead&page[limit]=100&page[offset]=0",     // the current query
+        "first": "/api/v1/merchants/?include=lead&page[limit]=100&page[offset]=0",    // the first page
+        "last": "/api/v1/merchants/?include=lead&page[limit]=100&page[offset]=100",   // the last page
+        "prev": null,                                                                 // the previous page
+        "next": "/api/v1/merchants/?include=lead&page[limit]=100&page[offset]=100"    // the next page
+      },
+      "meta": {
+        "count": 115,      // the total number of records matching your query
+        "limit": 100,      // the max number of records that could be returned
+        "offset": 0        // the number of records skipped
+      }
+    }
+
+## Errors
+
+Errors also adhere to the JSONAPI spec. Errors are returned as an array of JSON objects.
+
+    Request: /api/v1/merchantsss
+    
+    HTTP Status Code: 404
+    Response Body:
+    {
+      "errors": [
+        {
+          "status": "404",
+          "title": "Not Found"
+        }
+      ]
+    }
+
+The following HTTP Status Codes are utilized by the Anovia API:
+
+Status Code      |Description                  |Details
+-----------------|-----------------------------|-------------
+200              |OK                           |Successful request
+201              |Created                      |Record created
+400              |Bad Request                  |Error parsing request
+401              |Unauthorized                 |Error authenticating with your API credentials
+403              |Forbidden                    |You do not have permission for this resource
+422              |Unprocessable Entity         |Request well-formed, but errors in syntax (check query string)
+500              |Internal Server Error        |Oops, we broke something
+501              |Not Implemented              |Endpoint exists, but is not yet implemented
+
+## Schemas
+
 ## Leads
 
 ### Lead Routes
 
-    GET /leads
-
-    GET /leads/:id
-
-    GET /leads/:id/merchants
-
+Method  |Route                                  |Description
+--------|---------------------------------------|-------------
+POST    |/leads                                 |Create a new lead
+GET     |/leads                                 |Returns a collection of leads
+GET     |/leads/:id                             |Returns a lead by it's id
+GET     |/leads/:id/merchants                   |Returns all merchants for a specific lead
 
 ### Lead Schema
 
 Name                                    |Type                |Allow Null  |Required    |Description
 ----------------------------------------|--------------------|------------|------------|-------------
 id                                      |string(13)          |False       |-           |Anovia's unique identifier for lead records
-externalId                              |string(36)          |True        |False       |Your own unique identifier for leads submitted to Anovia
+externalIdentifier                      |string(36)          |True        |False       |Your own unique identifier for leads submitted to Anovia
 businessName                            |string(140)         |True        |True        |The name of the business you are referring
 contactName                             |string(140)         |True        |True        |The first and last name of the decision maker for the business
 contactPhone                            |string(10)          |True        |True        |The decision maker's phone number
 contactPhoneExtension                   |string(8)           |True        |True        |The decision maker's phone number extension
 contactEmail                            |string(140)         |True        |True        |The decision maker's email address
 bestTimeToContact                       |string(255)         |True        |False       |The best time and/or day to contact the decision maker
-submitterId                             |string(36)          |True        |False       |An id you provide for tracking your agent/employee who submitted the lead 
+submitterIdentifier                     |string(36)          |True        |False       |An id you provide for tracking your agent/employee who submitted the lead 
 submitterName                           |string(140)         |True        |False       |The name of the agent/employee who submitted the lead
 submitterPhone                          |string(10)          |True        |False       |The phone number of the agent/employee who submitted the lead
 submitterPhoneExtension                 |string(8)           |True        |False       |The phone number extension of the agent/employee who submitted the lead
 submitterEmail                          |string(140)         |True        |False       |The email address of the agent/employee who submitted the lead
 channel                                 |string(36)          |False       |True        |The sales channel to which this lead should be added. Possible values will be provided to you by your relationship manager
-tags                                    |array(tags)         |True        |False       |Any tags you wish to add to a lead for reporting purposes
+tags                                    |object              |True        |False       |JSON object containing key:value pairs for customizing your reporting. Will be passed along to merchant record.
+tags.key                                |string(20)          |True        |False       |Key by which a tag can be referenced. Keys must be unique.
+tags.value                              |string(36)          |True        |False       |Value of an individual tag
 status                                  |string(36)          |True        |-           |The current status of the lead (see below for values)
 receivedDate                            |date                |False       |-           |(YYYY-MM-DD) The date the lead was received 
 signedDate                              |date                |True        |-           |(YYYY-MM-DD) The date the lead signed their processing agreement
@@ -164,21 +317,16 @@ Lost                  |The merchant has decided not to process payments with Ano
 
 ### Merchant Routes
 
-    GET /merchants
-
-    GET /merchants/:id
-
-    GET /merchants/:id/residuals
-
-    GET /merchants/:id/statements
-
-    GET /merchants/:id/fees
-
-    GET /merchants/:id/deposits
-
-    GET /merchants/:id/batches
-
-    GET /merchants/:id/transactions
+Method  |Route                                  |Description
+--------|---------------------------------------|-------------
+GET     |/merchants                             |Returns a collection of merchants
+GET     |/merchants/:id                         |Returns a merchant by it's id
+GET     |/merchants/:id/residuals               |Returns all residuals for a specific merchant
+GET     |/merchants/:id/statements              |Returns all statements for a specific merchant
+GET     |/merchants/:id/fees                    |Returns all fees for a specific merchant
+GET     |/merchants/:id/deposits                |Returns all deposits for a specific merchant
+GET     |/merchants/:id/batches                 |Returns all batches for a specific merchant
+GET     |/merchants/:id/transactions            |Returns all transactions for a specific merchant
 
 ### Merchant Schema
 
@@ -187,13 +335,15 @@ Name                                    |Type                |Allow Null  |Descr
 id                                      |string(13)          |False       |Anovia's unique identifier for merchant records
 mid                                     |string(20)          |True        |Processing platform's ID for this merchant account
 lead                                    |string(13)          |False       |The id of the related lead
-processor                               |string(20)          |True        |The name of the processing platform
-externalId                              |string(36)          |True        |The identifier provided when you submitted the related Lead
+processorName                           |string(20)          |True        |The name of the processing platform
+externalIdentifier                      |string(36)          |True        |The identifier provided when you submitted the related Lead
 dbaName                                 |string(140)         |True        |The Doing Business As name for this merchant
-submitterId                             |string(36)          |True        |The id you provided for tracking your agent/employee who submitted the merchant's Lead 
+submitterIdentifier                     |string(36)          |True        |The id you provided for tracking your agent/employee who submitted the merchant's Lead 
 countryCode                             |string(2)           |False       |The two letter country code where the merchant transacts business
-channel                                 |string(36)          |False       |The sales channel you provided for the merchant's Lead
-tags                                    |array(tags)         |True        |Any tags you provided when creating the merchant's Lead
+channelName                             |string(36)          |False       |The sales channel you provided for the merchant's Lead
+tags                                    |object              |True        |Object containing key:value pairs for customizing your reporting. Inherited from lead record.
+tags.key                                |string(20)          |True        |Key by which a tag can be referenced
+tags.value                              |string(36)          |True        |Value of an individual tag
 status                                  |string(36)          |True        |The current status of the merchant (see below for values)
 createdDate                             |date                |False       |(YYYY-MM-DD) The date the merchant record was created 
 signedDate                              |date                |True        |(YYYY-MM-DD) The date the merchant's application was signed
@@ -218,9 +368,10 @@ Residual records are a snapshot of a merchant's processing volume and fees for o
 
 ### Residual Routes
 
-    GET /residuals
-
-    GET /residuals/:id
+Method  |Route                                  |Description
+--------|---------------------------------------|-------------
+GET     |/residuals                             |Returns a collection of residuals
+GET     |/residuals/:id                         |Returns a residual by it's id
 
 ### Residual Schema
 
@@ -229,7 +380,7 @@ Name                                    |Type                |Allow Null  |Descr
 id                                      |string(13)          |False       |Anovia's unique identifier for residual records
 mid                                     |string(20)          |False       |Processing platform's ID for this merchant account
 merchant                                |string(13)          |False       |The id of the related merchant
-processor                               |string(20)          |False       |The name of the processing platform
+processorName                           |string(20)          |False       |The name of the processing platform
 externalId                              |string(36)          |True        |The identifier provided when you submitted the related Lead
 mid                                     |string(20)          |False       |The processor issued merchant id for the merchant
 dbaName                                 |string(140)         |False       |The Doing Business As name for this merchant
@@ -242,23 +393,21 @@ nonProcessingFees                       |decimal             |False       |Fees 
 adjustments                             |decimal             |False       |Adjustments made to correct errors in prior residual statements
 netRevenue                              |decimal             |False       |The net revenue to Anovia from the merchant for the period
 residualPercentage                      |decimal             |False       |The percentage of fees that you receive per your referral agreement for this merchant
-residual                                |decimal             |False       |Your residual payment from this merchant for this period
-channel                                 |string(36)          |False       |The sales channel you provided for the merchant's Lead
-period                                  |int(6)              |False       |(YYYYMM) The year and month this residual pertains to
+residualAmount                          |decimal             |False       |Your residual payment from this merchant for this period
+channelName                             |string(36)          |False       |The sales channel you provided for the merchant's Lead
+period                                  |int                 |False       |(YYYYMM) The year and month this residual pertains to
 
 ## Statements
 
 ### Statement Routes
 
-    GET /statements
-
-    GET /statements/:id
-
-    GET /statements/:id/fees
-
-    GET /statements/:id/deposits
-
-    GET /statements/:id/batches
+Method  |Route                                  |Description
+--------|---------------------------------------|-------------
+GET     |/statements                            |Returns a collection of statements
+GET     |/statements/:id                        |Returns a statement by it's id
+GET     |/statements/:id/fees                   |Returns all fees for a specific statement
+GET     |/statements/:id/deposits               |Returns all deposits for a specific statement
+GET     |/statements/:id/batches                |Returns all batches for a specific statement
 
 ### Statement Schema
 
@@ -267,7 +416,7 @@ Name                                    |Type                |Allow Null  |Descr
 id                                      |string(13)          |False       |Anovia's unique identifier for statement records
 mid                                     |string(20)          |True        |Processing platform's ID for this merchant account
 merchant                                |string(13)          |False       |The id of the related merchant
-processor                               |string(20)          |False       |The name of the processing platform
+processorName                           |string(20)          |False       |The name of the processing platform
 startDate                               |date                |False       |(YYYY-MM-DD) The beginning date of the statement period 
 endDate                                 |date                |False       |(YYYY-MM-DD) The ending date of the statement period 
 totalTransactionAmount                  |decimal             |False       |The sum of transactions in this statement period
@@ -284,9 +433,10 @@ period                                  |int                 |False       |(YYYY
 
 ### Fee Routes
 
-    GET /fees
-
-    GET /fees/:id
+Method  |Route                                  |Description
+--------|---------------------------------------|-------------
+GET     |/fees                                  |Returns a collection of fees
+GET     |/fees/:id                              |Returns a fee by it's id
 
 ### Fee Schema
 
@@ -296,7 +446,7 @@ id                                      |string(13)          |False       |Anovi
 mid                                     |string(20)          |False       |Processing platform's ID for this merchant account
 merchant                                |string(13)          |False       |The id of the related merchant
 statement                               |string(13)          |False       |The id of the related statement
-processor                               |string(20)          |False       |The name of the processing platform
+processorName                           |string(20)          |False       |The name of the processing platform
 feeTitle                                |string(140)         |False       |The title of the specific fee item being assessed, ex. '1099 Fee', 'PCI Non Compliance Fee', 'Visa Assessments'
 feeType                                 |string(20)          |False       |Type of fee being assessed, ex. 'Authorization Fees', 'Card Brand Fees', 'Transaction Fees'
 transactionAmount                       |decimal             |False       |The dollar amount of the transactions
@@ -311,11 +461,11 @@ total                                   |decimal             |False       |Net v
 
 ### Deposit Routes
 
-    GET /deposits
-
-    GET /deposits/:id
-
-    GET /deposits/:id/batches
+Method  |Route                                  |Description
+--------|---------------------------------------|-------------
+GET     |/deposits                              |Returns a collection of deposits
+GET     |/deposits/:id                          |Returns a deposit by it's id
+GET     |/deposits/:id/batches                  |Returns all batches for a specific deposit
 
 ### Schema
 
@@ -325,7 +475,7 @@ id                                      |string(13)          |False       |Anovi
 mid                                     |string(20)          |False       |Processing platform's ID for this merchant account
 merchant                                |string(13)          |False       |The id of the related merchant
 statement                               |string(13)          |False       |The id of the related statement
-processor                               |string(20)          |False       |The name of the processing platform
+processorName                           |string(20)          |False       |The name of the processing platform
 depositDate                             |date                |False       |(YYYY-MM-DD) Business date the merchant should receive deposit.
 routingNumber                           |string(9)           |True        |ABA number of merchants designated depository institution.
 accountNumber                           |string(40)          |True        |Settlement account designated by merchant at the depository institution.
@@ -335,11 +485,11 @@ depositAmount                           |decimal             |False       |Dolla
 
 ### Batch Routes
 
-    GET /batches
-
-    GET /batches/:id
-
-    GET /batches/:id/transactions
+Method  |Route                                  |Description
+--------|---------------------------------------|-------------
+GET     |/batches                               |Returns a collection of batches
+GET     |/batches/:id                           |Returns a batch by it's id
+GET     |/batches/:id/transactions              |Returns all transactions for a specific batch
 
 ### Batch Schema
 
@@ -349,21 +499,23 @@ id                                      |string(13)          |False       |Anovi
 mid                                     |string(20)          |True        |Processing platform's ID for this merchant account
 merchant                                |string(13)          |False       |The id of the related merchant
 statement                               |string(13)          |False       |The id of the related statement
-processor                               |string(20)          |False       |The name of the processing platform
+processorName                           |string(20)          |False       |The name of the processing platform
 batchDate                               |date                |False       |(YYYY-MM-DD) Date batch was processed
 totalTransactionAmount                  |decimal             |False       |Total value of processed transactions
 totalTransactionCount                   |int                 |False       |Number of settled transactions processed in the batch
 nonSettledTransactionAmount             |decimal             |True        |The amount of sales that were processed in the batch but not settled
 settledTransactionAmount                |decimal             |True        |The amount of sales that were processed in the batch and settled
-terminalIdentifier                      |string(20)          |True        |The id of the terminal used to process the transaction 
+terminalName                            |string(20)          |True        |A short descriptor of the product being used. Ex: 'VX520', 'BridgePay', 'Auth.net'
+terminalIdentifier                      |string(20)          |True        |The id of the terminal used to process the transaction
 
 ## Transactions
 
 ### Routes
 
-    GET /transactions
-
-    GET /transactions/:id
+Method  |Route                                  |Description
+--------|---------------------------------------|-------------
+GET     |/transactions                          |Returns a collection of transactions
+GET     |/transactions/:id                      |Returns a transaction by it's id
 
 ### Transaction Schema
 
@@ -373,7 +525,7 @@ id                                      |string(13)          |False       |Anovi
 mid                                     |string(20)          |True        |Processing platform's ID for this merchant account
 merchant                                |string(13)          |False       |The id of the related merchant
 batch                                   |string(13)          |False       |The id of the related batch
-processor                               |string(20)          |False       |The name of the processing platform
+processorName                           |string(20)          |False       |The name of the processing platform
 accountNumber                           |string(16)          |False       |The account number associated with the customer's form of payment. For payment card transactions, this will be the masked account number. ex: 123456XXXXXX1234
 transactionDate                         |date                |False       |Date the transaction was initiated  
 paymentType                             |int                 |False       |Form of payment used by the customer/cardholder 
@@ -381,6 +533,7 @@ transactionAmount                       |decimal             |False       |Origi
 authorizationAmount                     |decimal             |False       |Authorized transaction amount
 salesTaxAmount                          |decimal             |False       |Dollar value of the sales tax related to transactions
 authorizationCode                       |string(6)           |True        |Authorization code assigned to the transaction
+terminalName                            |string(20)          |True        |A short descriptor of the product being used. Ex: 'VX520', 'BridgePay', 'Auth.net'
 terminalIdentifier                      |string(20)          |True        |The id of the terminal used to process the transaction
 merchantIdentifier                      |string(128)         |True        |An identifier for this transaction from the merchant's POS system
 
@@ -454,4 +607,4 @@ __filter[field]__ - specify criteria by which to filter the results of a collect
     Default: None
     
 
-&copy; 2015 - Anovia Payments. All rights reserved. 
+&copy; 2016 - Anovia Payments. All rights reserved. 
