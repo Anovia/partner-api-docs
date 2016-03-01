@@ -286,8 +286,8 @@ submitterPhone                          |string(10)          |True        |False
 submitterPhoneExtension                 |string(8)           |True        |False       |The phone number extension of the agent/employee who submitted the lead
 submitterEmail                          |string(140)         |True        |False       |The email address of the agent/employee who submitted the lead
 channel                                 |string(36)          |False       |True        |The sales channel to which this lead should be added. Possible values will be provided to you by your relationship manager
-tags                                    |object              |True        |False       |Object containing key:value pairs for customizing your reporting. Will be passed along to merchant record.
-tags.key                                |string(20)          |True        |False       |Key by which a tag can be referenced
+tags                                    |object              |True        |False       |JSON object containing key:value pairs for customizing your reporting. Will be passed along to merchant record.
+tags.key                                |string(20)          |True        |False       |Key by which a tag can be referenced. Keys must be unique.
 tags.value                              |string(36)          |True        |False       |Value of an individual tag
 status                                  |string(36)          |True        |-           |The current status of the lead (see below for values)
 receivedDate                            |date                |False       |-           |(YYYY-MM-DD) The date the lead was received 
