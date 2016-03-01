@@ -121,25 +121,25 @@ For sample requests, responses, and code, please check out our Postman collectio
 
 Name                                    |Type                |Allow Null  |Required    |Description
 ----------------------------------------|--------------------|------------|------------|-------------
-id                                      |nvarchar(13)        |False       |-           |Anovia's unique identifier for lead records
-externalId                              |nvarchar(36)        |True        |False       |Your own unique identifier for leads submitted to Anovia
-businessName                            |nvarchar(140)       |True        |True        |The name of the business you are referring
-contactName                             |nvarchar(140)       |True        |True        |The first and last name of the decision maker for the business
-contactPhone                            |nvarchar(10)        |True        |True        |The decision maker's phone number
-contactPhoneExtension                   |nvarchar(8)         |True        |True        |The decision maker's phone number extension
-contactEmail                            |nvarchar(140)       |True        |True        |The decision maker's email address
-bestTimeToContact                       |nvarchar(255)       |True        |False       |The best time and/or day to contact the decision maker
-submitterId                             |nvarchar(36)        |True        |False       |An id you provide for tracking your agent/employee who submitted the lead 
-submitterName                           |nvarchar(140)       |True        |False       |The name of the agent/employee who submitted the lead
-submitterPhone                          |nvarchar(10)        |True        |False       |The phone number of the agent/employee who submitted the lead
-submitterPhoneExtension                 |nvarchar(8)         |True        |False       |The phone number extension of the agent/employee who submitted the lead
-submitterEmail                          |nvarchar(140)       |True        |False       |The email address of the agent/employee who submitted the lead
-channel                                 |nvarchar(36)        |False       |True        |The sales channel to which this lead should be added. Possible values will be provided to you by your relationship manager
+id                                      |string(13)          |False       |-           |Anovia's unique identifier for lead records
+externalId                              |string(36)          |True        |False       |Your own unique identifier for leads submitted to Anovia
+businessName                            |string(140)         |True        |True        |The name of the business you are referring
+contactName                             |string(140)         |True        |True        |The first and last name of the decision maker for the business
+contactPhone                            |string(10)          |True        |True        |The decision maker's phone number
+contactPhoneExtension                   |string(8)           |True        |True        |The decision maker's phone number extension
+contactEmail                            |string(140)         |True        |True        |The decision maker's email address
+bestTimeToContact                       |string(255)         |True        |False       |The best time and/or day to contact the decision maker
+submitterId                             |string(36)          |True        |False       |An id you provide for tracking your agent/employee who submitted the lead 
+submitterName                           |string(140)         |True        |False       |The name of the agent/employee who submitted the lead
+submitterPhone                          |string(10)          |True        |False       |The phone number of the agent/employee who submitted the lead
+submitterPhoneExtension                 |string(8)           |True        |False       |The phone number extension of the agent/employee who submitted the lead
+submitterEmail                          |string(140)         |True        |False       |The email address of the agent/employee who submitted the lead
+channel                                 |string(36)          |False       |True        |The sales channel to which this lead should be added. Possible values will be provided to you by your relationship manager
 tags                                    |array(tags)         |True        |False       |Any tags you wish to add to a lead for reporting purposes
-status                                  |nvarchar(36)        |True        |-           |The current status of the lead (see below for values)
-receivedDate                            |datetime(8)         |False       |-           |(YYYY-MM-DD) The date the lead was received 
-signedDate                              |datetime(8)         |True        |-           |(YYYY-MM-DD) The date the lead signed their processing agreement
-lostDate                                |datetime(8)         |True        |-           |(YYYY-MM-DD) THe date the lead was lost (hopefully this is null!)
+status                                  |string(36)          |True        |-           |The current status of the lead (see below for values)
+receivedDate                            |date                |False       |-           |(YYYY-MM-DD) The date the lead was received 
+signedDate                              |date                |True        |-           |(YYYY-MM-DD) The date the lead signed their processing agreement
+lostDate                                |date                |True        |-           |(YYYY-MM-DD) THe date the lead was lost (hopefully this is null!)
 
 ## Lead Statuses
 
@@ -149,7 +149,7 @@ should the merchant call back and wish to resume the sales process. For this rea
 the status of a lead.
 
 Status                |Description
-----------------------|----------
+----------------------|-------------
 New                   |Lead received, not yet touched
 Qualifying            |First contact attempted
 Contact in Progress   |Decision maker reached via phone or email
@@ -183,22 +183,34 @@ Lost                  |The merchant has decided not to process payments with Ano
 ### Merchant Schema
 
 Name                                    |Type                |Allow Null  |Description
-----------------------------------------|--------------------|------------|---------------
-id                                      |nvarchar(13)        |False       |Anovia's unique identifier for merchant records
-lead                                    |nvarchar(13)        |False       |The id of the related lead
-externalId                              |nvarchar(36)        |True        |The identifier provided when you submitted the related Lead
-dbaName                                 |nvarchar(140)       |True        |The Doing Business As name for this merchant
-submitterId                             |nvarchar(36)        |True        |The id you provided for tracking your agent/employee who submitted the merchant's Lead 
-countryCode                             |nchar(2)            |False       |The two letter country code where the merchant transacts business
-channel                                 |nvarchar(36)        |False       |The sales channel you provided for the merchant's Lead
+----------------------------------------|--------------------|------------|-------------
+id                                      |string(13)          |False       |Anovia's unique identifier for merchant records
+mid                                     |string(20)          |True        |Processing platform's ID for this merchant account
+lead                                    |string(13)          |False       |The id of the related lead
+processor                               |string(20)          |True        |The name of the processing platform
+externalId                              |string(36)          |True        |The identifier provided when you submitted the related Lead
+dbaName                                 |string(140)         |True        |The Doing Business As name for this merchant
+submitterId                             |string(36)          |True        |The id you provided for tracking your agent/employee who submitted the merchant's Lead 
+countryCode                             |string(2)           |False       |The two letter country code where the merchant transacts business
+channel                                 |string(36)          |False       |The sales channel you provided for the merchant's Lead
 tags                                    |array(tags)         |True        |Any tags you provided when creating the merchant's Lead
-status                                  |nvarchar(36)        |True        |The current status of the merchant (see below for values)
-createdDate                             |datetime(8)         |False       |(YYYY-MM-DD) The date the merchant record was created 
-signedDate                              |datetime(8)         |True        |(YYYY-MM-DD) The date the merchant's application was signed
-approvedDate                            |datetime(8)         |True        |(YYYY-MM-DD) The date the merchant was approved by underwriting
-activatedDate                           |datetime(8)         |True        |(YYYY-MM-DD) The date the merchant processed their first transaction
-deactivatedDate                         |datetime(8)         |True        |(YYYY-MM-DD) The date the merchant closed their account (hopefully this is null!)
+status                                  |string(36)          |True        |The current status of the merchant (see below for values)
+createdDate                             |date                |False       |(YYYY-MM-DD) The date the merchant record was created 
+signedDate                              |date                |True        |(YYYY-MM-DD) The date the merchant's application was signed
+approvedDate                            |date                |True        |(YYYY-MM-DD) The date the merchant was approved by underwriting
+activatedDate                           |date                |True        |(YYYY-MM-DD) The date the merchant processed their first transaction
+deactivatedDate                         |date                |True        |(YYYY-MM-DD) The date the merchant closed their account (hopefully this is null!)
 
+## Merchant Statuses
+
+Status                |Description
+----------------------|----------
+QA                    |Merchant has signed agreement, data being reviewed for accuracy
+Underwriting          |Performing KYC checks, decisioning account
+Boarding              |Account approved, configuring platform
+Product               |Equipment/Services being configured/shipped/deployed
+Active                |Merchant has processed their first transaction
+Closed                |Merchant account has been closed and/or deactivated
 
 ## Residuals
 
@@ -214,23 +226,24 @@ Residual records are a snapshot of a merchant's processing volume and fees for o
 
 Name                                    |Type                |Allow Null  |Description
 ----------------------------------------|--------------------|------------|-------------
-id                                      |nvarchar(13)        |False       |Anovia's unique identifier for residual records
-merchant                                |nvarchar(13)        |False       |The id of the related merchant
-externalId                              |nvarchar(36)        |True        |The identifier provided when you submitted the related Lead
-mid                                     |nvarchar(20)        |False       |The processor issued merchant id for the merchant
-dbaName                                 |nvarchar(140)       |True        |The Doing Business As name for this merchant
-submitterId                             |nvarchar(36)        |True        |The id you provided for tracking your agent/employee who submitted the merchant's Lead
+id                                      |string(13)          |False       |Anovia's unique identifier for residual records
+mid                                     |string(20)          |False       |Processing platform's ID for this merchant account
+merchant                                |string(13)          |False       |The id of the related merchant
+processor                               |string(20)          |False       |The name of the processing platform
+externalId                              |string(36)          |True        |The identifier provided when you submitted the related Lead
+mid                                     |string(20)          |False       |The processor issued merchant id for the merchant
+dbaName                                 |string(140)         |False       |The Doing Business As name for this merchant
+submitterId                             |string(36)          |True        |The id you provided for tracking your agent/employee who submitted the merchant's Lead
 signedVolume                            |decimal(8)          |False       |The monthly volume the merchant projected when they signed their processing agreement
 volume                                  |decimal(8)          |False       |The merchant's actual volume for the period
 totalFees                               |decimal(8)          |False       |The total fees due from the merchant for the period
 collectedFees                           |decimal(8)          |False       |The total fees collected from the merchant for the period
-nonProcessingFees                       |decimal(8)          |False       |
-adjustments                             |decimal(8)          |False       |
-revenue                                 |decimal(8)          |False       |The net revenue to Anovia from the merchant for the period
-positiveRevenue                         |decimal(8)          |False       |
+nonProcessingFees                       |decimal(8)          |False       |Fees assessed to the merchant but excluded from residual calculation
+adjustments                             |decimal(8)          |False       |Adjustments made to correct errors in prior residual statements
+netRevenue                              |decimal(8)          |False       |The net revenue to Anovia from the merchant for the period
 residualPercentage                      |decimal(8)          |False       |The percentage of fees that you receive per your referral agreement for this merchant
 residual                                |decimal(8)          |False       |Your residual payment from this merchant for this period
-channel                                 |nvarchar(36)        |False       |The sales channel you provided for the merchant's Lead
+channel                                 |string(36)          |False       |The sales channel you provided for the merchant's Lead
 period                                  |int(6)              |False       |(YYYYMM) The year and month this residual pertains to
 
 ## Statements
@@ -250,20 +263,22 @@ period                                  |int(6)              |False       |(YYYY
 ### Statement Schema
 
 Name                                    |Type                |Allow Null  |Description
-----------------------------------------|--------------------|------------|-----------
-id                                      |nvarchar(13)        |False       |
-merchant                                |nvarchar(13)        |False       |The id of the related merchant
-statementPeriod                         |int(4)              |False       |
-statementStartDate                      |datetime(8)         |False       |
-statementEndDate                        |datetime(8)         |False       |
-totalTransactionAmount                  |decimal(8)          |False       |
-totalTransactionCount                   |int(4)              |False       |
-totalFeeAmount                          |decimal(8)          |False       |
-totalFeeCount                           |int(4)              |False       |
-totalDepositAmount                      |decimal(8)          |False       |
-totalDepositCount                       |int(4)              |False       |
-totalBatchAmount                        |decimal(8)          |False       |
-totalBatchCount                         |int(4)              |False       |
+----------------------------------------|--------------------|------------|-------------
+id                                      |string(13)          |False       |Anovia's unique identifier for statement records
+mid                                     |string(20)          |True        |Processing platform's ID for this merchant account
+merchant                                |string(13)          |False       |The id of the related merchant
+processor                               |string(20)          |False       |The name of the processing platform
+startDate                               |date                |False       |(YYYY-MM-DD) The beginning date of the statement period 
+endDate                                 |date                |False       |(YYYY-MM-DD) The ending date of the statement period 
+totalTransactionAmount                  |decimal             |False       |The sum of transactions in this statement period
+totalTransactionCount                   |int                 |False       |The sum of transactions in this statement period
+totalFeeAmount                          |decimal             |False       |Total dollar value of fees
+totalFeeCount                           |int                 |False       |Total number of fee items 
+totalDepositAmount                      |decimal             |False       |The total amount of sales deposited in this statement period
+totalDepositCount                       |int                 |False       |The total count of deposits in this statement period
+totalBatchAmount                        |decimal             |False       |The total amount of sales batched in this statement period
+totalBatchCount                         |int                 |False       |The total count of batches in this statement period
+period                                  |int                 |False       |(YYYYMM) The year and month this statement pertains to 
 
 ## Fees
 
@@ -276,19 +291,21 @@ totalBatchCount                         |int(4)              |False       |
 ### Fee Schema
 
 Name                                    |Type                |Allow Null  |Description
-----------------------------------------|--------------------|------------|-----------
-id                                      |nvarchar(13)        |False       |
-merchant                                |nvarchar(13)        |False       |The id of the related merchant
-statement                               |nvarchar(13)        |False       |The id of the related statement
-transactionAmount                       |decimal(8)          |False       |
-transactionCount                        |int(8)          	   |False       |
-rate                                    |decimal(8)          |False       |
-rateType                                |varchar(20)         |False       |
-description                             |varchar(1000)       |False       |
-paid                                    |decimal(8)          |False       |
-due                                     |decimal(8)          |False       |
-total                                   |decimal(8)          |False       |
-feeType                                 |varchar(20)         |False       |
+----------------------------------------|--------------------|------------|-------------
+id                                      |string(13)          |False       |Anovia's unique identifier for fee records
+mid                                     |string(20)          |False       |Processing platform's ID for this merchant account
+merchant                                |string(13)          |False       |The id of the related merchant
+statement                               |string(13)          |False       |The id of the related statement
+processor                               |string(20)          |False       |The name of the processing platform
+feeTitle                                |string(140)         |False       |The title of the specific fee item being assessed, ex. '1099 Fee', 'PCI Non Compliance Fee', 'Visa Assessments'
+feeType                                 |string(20)          |False       |Type of fee being assessed, ex. 'Authorization Fees', 'Card Brand Fees', 'Transaction Fees'
+transactionAmount                       |decimal             |False       |The dollar amount of the transactions
+transactionCount                        |int            	   |False       |The number of transactions in this rate category
+rate                                    |decimal             |False       |The dollar value of the rate assessed
+rateType                                |string(20)          |False       |The type of rate being assessed, either 'percentage' or 'per item'
+paid                                    |decimal             |False       |Value of fees collected
+due                                     |decimal             |False       |Dollar value of total fees due
+total                                   |decimal             |False       |Net value of fees paid vs. fees due
 
 ## Deposits
 
@@ -302,17 +319,17 @@ feeType                                 |varchar(20)         |False       |
 
 ### Schema
 
-Name                                    |Type                |Allow Null  |
-----------------------------------------|--------------------|------------|
-id                                      |nvarchar(13)        |False       |
-merchant                                |nvarchar(13)        |False       |The id of the related merchant
-statement                               |nvarchar(13)        |False       |The id of the related statement
-depositDate                             |datetime(8)         |False       |
-batchDate                               |datetime(8)         |False       |
-transactionDate                         |datetime(8)         |False       |
-routingNumber                           |nvarchar(9)         |True        |
-accountNumber                           |nvarchar(40)        |True        |
-depositAmount                           |decimal(8)          |False       |
+Name                                    |Type                |Allow Null  |Description
+----------------------------------------|--------------------|------------|-------------
+id                                      |string(13)          |False       |Anovia's unique identifier for deposit records
+mid                                     |string(20)          |False       |Processing platform's ID for this merchant account
+merchant                                |string(13)          |False       |The id of the related merchant
+statement                               |string(13)          |False       |The id of the related statement
+processor                               |string(20)          |False       |The name of the processing platform
+depositDate                             |date                |False       |(YYYY-MM-DD) Business date the merchant should receive deposit.
+routingNumber                           |string(9)           |True        |ABA number of merchants designated depository institution.
+accountNumber                           |string(40)          |True        |Settlement account designated by merchant at the depository institution.
+depositAmount                           |decimal             |False       |Dollar value of the merchant deposit.
 
 ## Batches
 
@@ -326,21 +343,19 @@ depositAmount                           |decimal(8)          |False       |
 
 ### Batch Schema
 
-Name                                    |Type                |Allow Null  |
-----------------------------------------|--------------------|------------|
-id                                      |nvarchar(13)        |False       |
-merchant                                |nvarchar(13)        |False       |The id of the related merchant
-statement                               |nvarchar(13)        |False       |The id of the related statement
-batchDate                               |datetime(8)         |False       |
-transactionAmount                       |decimal(8)          |False       |
-creditTransactionAmount                 |decimal(8)          |False       |
-debitTransactionAmount                  |decimal(8)          |False       |
-authorizationAmount                     |decimal(8)          |False       |
-creditAuthorizationAmount               |decimal(8)          |False       |
-debitAuthorizationAmount                |decimal(8)          |False       |
-transactionCount                        |int(4)              |False       |
-creditTransactionCount                  |int(4)              |False       |
-debitTransactionCount                   |int(4)              |False       |
+Name                                    |Type                |Allow Null  |Description
+----------------------------------------|--------------------|------------|-------------
+id                                      |string(13)          |False       |Anovia's unique identifier for batch records
+mid                                     |string(20)          |True        |Processing platform's ID for this merchant account
+merchant                                |string(13)          |False       |The id of the related merchant
+statement                               |string(13)          |False       |The id of the related statement
+processor                               |string(20)          |False       |The name of the processing platform
+batchDate                               |date                |False       |(YYYY-MM-DD) Date batch was processed
+totalTransactionAmount                  |decimal             |False       |Total value of processed transactions
+totalTransactionCount                   |int                 |False       |Number of settled transactions processed in the batch
+nonSettledTransactionAmount             |decimal             |True        |The amount of sales that were processed in the batch but not settled
+settledTransactionAmount                |decimal             |True        |The amount of sales that were processed in the batch and settled
+terminalIdentifier                      |string(20)          |True        |The id of the terminal used to process the transaction 
 
 ## Transactions
 
@@ -352,23 +367,22 @@ debitTransactionCount                   |int(4)              |False       |
 
 ### Transaction Schema
 
-Name                                    |Type                |Allow Null  |
-----------------------------------------|--------------------|------------|
-id                                      |nvarchar(13)        |False       |
-merchant                                |nvarchar(13)        |False       |The id of the related merchant
-batch                                   |nvarchar(13)        |False       |The id of the related batch
-deposit                                 |nvarchar(13)        |True        |
-primaryAccountNumber                    |nvarchar(16)        |False       |
-transactionDate                         |datetime(8)         |False       |
-creditCardType                          |int(4)              |False       |
-transactionAmount                       |decimal(8)          |False       |
-authorizationAmount                     |decimal(8)          |False       |
-salesTaxAmount                          |decimal(8)          |False       |
-authorizationCode                       |nvarchar(6)         |True        |
-terminalIdentifier                      |nvarchar(128)       |True        |
-merchantIdentifier                      |nvarchar(128)       |True        |
-processorIdentifier                     |nvarchar(128)       |True        |
-issuerIdentifier                        |nvarchar(128)       |True        |
+Name                                    |Type                |Allow Null  |Description
+----------------------------------------|--------------------|------------|-------------
+id                                      |string(13)          |False       |Anovia's unique identifier for transaction records
+mid                                     |string(20)          |True        |Processing platform's ID for this merchant account
+merchant                                |string(13)          |False       |The id of the related merchant
+batch                                   |string(13)          |False       |The id of the related batch
+processor                               |string(20)          |False       |The name of the processing platform
+accountNumber                           |string(16)          |False       |The account number associated with the customer's form of payment. For payment card transactions, this will be the masked account number. ex: 123456XXXXXX1234
+transactionDate                         |date                |False       |Date the transaction was initiated  
+paymentType                             |int                 |False       |Form of payment used by the customer/cardholder 
+transactionAmount                       |decimal             |False       |Original transaction amount
+authorizationAmount                     |decimal             |False       |Authorized transaction amount
+salesTaxAmount                          |decimal             |False       |Dollar value of the sales tax related to transactions
+authorizationCode                       |string(6)           |True        |Authorization code assigned to the transaction
+terminalIdentifier                      |string(20)          |True        |The id of the terminal used to process the transaction
+merchantIdentifier                      |string(128)         |True        |An identifier for this transaction from the merchant's POS system
 
 ---
 ## Query Syntax
