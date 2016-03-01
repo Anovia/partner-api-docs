@@ -1,4 +1,4 @@
-# partner-api-docs v0.2.0
+# partner-api-docs v0.3.0
 Documentation for Anovia's REST API for partner lead submission, on boarding, and reporting.
 
 ---
@@ -54,8 +54,10 @@ The Anovia Partner API uses [semantic versioning](http://semver.org).
 Version numbers can be interpreted as MAJOR.MINOR.PATCH. 
 
 - MAJOR version is incremented for incompatible API changes.
-- MINOR version is incremented for additional functionality or fields that are backwards-compatible. __NOTE:__ The introduction of new fields is regarded as a backwards-compatible change.
+- MINOR version is incremented for additional functionality or fields that are backwards-compatible.
 - PATCH version is incremented for backwards-compatible bug fixes.
+
+> NOTE: The introduction of new fields is regarded as a backwards-compatible change, and thus only requires incrementing the MINOR version.
 
 ---
 ## Glossary of Terms
@@ -605,4 +607,4 @@ __filter[field]__ - specify criteria by which to filter the results of a collect
     Default: None
     
 
-&copy; 2015 - Anovia Payments. All rights reserved. 
+&copy; 2016 - Anovia Payments. All rights reserved. 
