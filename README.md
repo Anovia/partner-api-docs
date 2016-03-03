@@ -1,4 +1,4 @@
-# partner-api-docs v0.3.0
+# partner-api-docs v0.3.1
 Documentation for Anovia's REST API for partner lead submission, on boarding, and reporting.
 
 ---
@@ -276,7 +276,7 @@ submitterName                           |string(140)         |True        |False
 submitterPhone                          |string(10)          |True        |False       |The phone number of the agent/employee who submitted the lead
 submitterPhoneExtension                 |string(8)           |True        |False       |The phone number extension of the agent/employee who submitted the lead
 submitterEmail                          |string(140)         |True        |False       |The email address of the agent/employee who submitted the lead
-channel                                 |string(36)          |False       |True        |The sales channel to which this lead should be added. Possible values will be provided to you by your relationship manager
+channelName                             |string(36)          |False       |True        |The sales channel to which this lead should be added. Possible values will be provided to you by your relationship manager
 tags                                    |object              |True        |False       |JSON object containing key:value pairs for customizing your reporting. Will be passed along to merchant record.
 tags.key                                |string(20)          |True        |False       |Key by which a tag can be referenced. Keys must be unique.
 tags.value                              |string(36)          |True        |False       |Value of an individual tag
@@ -373,7 +373,6 @@ mid                                     |string(20)          |False       |Proce
 merchant                                |string(13)          |False       |The id of the related merchant
 processorName                           |string(20)          |False       |The name of the processing platform
 externalId                              |string(36)          |True        |The identifier provided when you submitted the related Lead
-mid                                     |string(20)          |False       |The processor issued merchant id for the merchant
 dbaName                                 |string(140)         |False       |The Doing Business As name for this merchant
 submitterId                             |string(36)          |True        |The id you provided for tracking your agent/employee who submitted the merchant's Lead
 signedVolume                            |decimal             |False       |The monthly volume the merchant projected when they signed their processing agreement
@@ -382,9 +381,9 @@ totalFees                               |decimal             |False       |The t
 collectedFees                           |decimal             |False       |The total fees collected from the merchant for the period
 nonProcessingFees                       |decimal             |False       |Fees assessed to the merchant but excluded from residual calculation
 adjustments                             |decimal             |False       |Adjustments made to correct errors in prior residual statements
-netRevenue                              |decimal             |False       |The net revenue to Anovia from the merchant for the period
+netRevenue                              |decimal             |False       |Total Fees minus Non-Processing Fees, plus Adjustments
 residualPercentage                      |decimal             |False       |The percentage of fees that you receive per your referral agreement for this merchant
-residualAmount                          |decimal             |False       |Your residual payment from this merchant for this period
+residualAmount                          |decimal             |False       |Net Revenue multiplied by Residual Percentage
 channelName                             |string(36)          |False       |The sales channel you provided for the merchant's Lead
 period                                  |int                 |False       |(YYYYMM) The year and month this residual pertains to
 
@@ -440,13 +439,14 @@ statement                               |string(13)          |False       |The i
 processorName                           |string(20)          |False       |The name of the processing platform
 feeTitle                                |string(140)         |False       |The title of the specific fee item being assessed, ex. '1099 Fee', 'PCI Non Compliance Fee', 'Visa Assessments'
 feeType                                 |string(20)          |False       |Type of fee being assessed, ex. 'Authorization Fees', 'Card Brand Fees', 'Transaction Fees'
-transactionAmount                       |decimal             |False       |The dollar amount of the transactions
-transactionCount                        |int            	   |False       |The number of transactions in this rate category
+totalTransactionAmount                  |decimal             |False       |The dollar amount of the transactions
+totalTransactionCount                   |int            	 |False       |The number of transactions in this rate category
 rate                                    |decimal             |False       |The dollar value of the rate assessed
 rateType                                |string(20)          |False       |The type of rate being assessed, either 'percentage' or 'per item'
 paid                                    |decimal             |False       |Value of fees collected
 due                                     |decimal             |False       |Dollar value of total fees due
 total                                   |decimal             |False       |Net value of fees paid vs. fees due
+period                                  |int                 |False       |(YYYYMM) The year and month this fee was billed
 
 ## Deposits
 
@@ -471,6 +471,7 @@ depositDate                             |date                |False       |(YYYY
 routingNumber                           |string(9)           |True        |ABA number of merchants designated depository institution.
 accountNumber                           |string(40)          |True        |Settlement account designated by merchant at the depository institution.
 depositAmount                           |decimal             |False       |Dollar value of the merchant deposit.
+period                                  |int                 |False       |(YYYYMM) The year and month this deposit occurred
 
 ## Batches
 
@@ -490,6 +491,7 @@ id                                      |string(13)          |False       |Anovi
 mid                                     |string(20)          |True        |Processing platform's ID for this merchant account
 merchant                                |string(13)          |False       |The id of the related merchant
 statement                               |string(13)          |False       |The id of the related statement
+deposit                                 |string(13)          |False       |The id of the related deposit
 processorName                           |string(20)          |False       |The name of the processing platform
 batchDate                               |date                |False       |(YYYY-MM-DD) Date batch was processed
 totalTransactionAmount                  |decimal             |False       |Total value of processed transactions
@@ -498,6 +500,7 @@ nonSettledTransactionAmount             |decimal             |True        |The a
 settledTransactionAmount                |decimal             |True        |The amount of sales that were processed in the batch and settled
 terminalName                            |string(20)          |True        |A short descriptor of the product being used. Ex: 'VX520', 'BridgePay', 'Auth.net'
 terminalIdentifier                      |string(20)          |True        |The id of the terminal used to process the transaction
+period                                  |int                 |False       |(YYYYMM) The year and month this batch was processed
 
 ## Transactions
 
@@ -522,8 +525,7 @@ transactionDate                         |date                |False       |Date 
 paymentType                             |int                 |False       |Form of payment used by the customer/cardholder 
 transactionAmount                       |decimal             |False       |Original transaction amount
 authorizationAmount                     |decimal             |False       |Authorized transaction amount
-salesTaxAmount                          |decimal             |False       |Dollar value of the sales tax related to transactions
-authorizationCode                       |string(6)           |True        |Authorization code assigned to the transaction
+authorizationCode                       |string(20)           |True        |Authorization code assigned to the transaction
 terminalName                            |string(20)          |True        |A short descriptor of the product being used. Ex: 'VX520', 'BridgePay', 'Auth.net'
 terminalIdentifier                      |string(20)          |True        |The id of the terminal used to process the transaction
 merchantIdentifier                      |string(128)         |True        |An identifier for this transaction from the merchant's POS system
