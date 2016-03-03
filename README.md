@@ -268,7 +268,7 @@ externalIdentifier                      |string(36)          |True        |False
 businessName                            |string(140)         |True        |True        |The name of the business you are referring
 contactName                             |string(140)         |True        |True        |The first and last name of the decision maker for the business
 contactPhone                            |string(10)          |True        |True        |The decision maker's phone number
-contactPhoneExtension                   |string(8)           |True        |True        |The decision maker's phone number extension
+contactPhoneExtension                   |string(8)           |True        |False       |The decision maker's phone number extension
 contactEmail                            |string(140)         |True        |True        |The decision maker's email address
 bestTimeToContact                       |string(255)         |True        |False       |The best time and/or day to contact the decision maker
 submitterIdentifier                     |string(36)          |True        |False       |An id you provide for tracking your agent/employee who submitted the lead 
@@ -284,6 +284,7 @@ status                                  |string(36)          |True        |-    
 receivedDate                            |date                |False       |-           |(YYYY-MM-DD) The date the lead was received 
 signedDate                              |date                |True        |-           |(YYYY-MM-DD) The date the lead signed their processing agreement
 lostDate                                |date                |True        |-           |(YYYY-MM-DD) THe date the lead was lost (hopefully this is null!)
+countryCode                             |string(2)           |False       |True        |The country the business is located in. Currently either 'US' or 'CA'
 
 ## Lead Statuses
 
@@ -372,9 +373,9 @@ id                                      |string(13)          |False       |Anovi
 mid                                     |string(20)          |False       |Processing platform's ID for this merchant account
 merchant                                |string(13)          |False       |The id of the related merchant
 processorName                           |string(20)          |False       |The name of the processing platform
-externalId                              |string(36)          |True        |The identifier provided when you submitted the related Lead
+externalIdentifier                      |string(36)          |True        |The identifier provided when you submitted the related Lead
 dbaName                                 |string(140)         |False       |The Doing Business As name for this merchant
-submitterId                             |string(36)          |True        |The id you provided for tracking your agent/employee who submitted the merchant's Lead
+submitterIdentifier                     |string(36)          |True        |The id you provided for tracking your agent/employee who submitted the merchant's Lead
 signedVolume                            |decimal             |False       |The monthly volume the merchant projected when they signed their processing agreement
 volume                                  |decimal             |False       |The merchant's actual volume for the period
 totalFees                               |decimal             |False       |The total fees due from the merchant for the period
@@ -410,7 +411,7 @@ processorName                           |string(20)          |False       |The n
 startDate                               |date                |False       |(YYYY-MM-DD) The beginning date of the statement period 
 endDate                                 |date                |False       |(YYYY-MM-DD) The ending date of the statement period 
 totalTransactionAmount                  |decimal             |False       |The sum of transactions in this statement period
-totalTransactionCount                   |int                 |False       |The sum of transactions in this statement period
+totalTransactionCount                   |int                 |False       |The count of transactions in this statement period
 totalFeeAmount                          |decimal             |False       |Total dollar value of fees
 totalFeeCount                           |int                 |False       |Total number of fee items 
 totalDepositAmount                      |decimal             |False       |The total amount of sales deposited in this statement period
@@ -522,7 +523,7 @@ batch                                   |string(13)          |False       |The i
 processorName                           |string(20)          |False       |The name of the processing platform
 accountNumber                           |string(16)          |False       |The account number associated with the customer's form of payment. For payment card transactions, this will be the masked account number. ex: 123456XXXXXX1234
 transactionDate                         |date                |False       |Date the transaction was initiated  
-paymentType                             |int                 |False       |Form of payment used by the customer/cardholder 
+paymentType                             |string(20)          |False       |Form of payment used by the customer/cardholder 
 transactionAmount                       |decimal             |False       |Original transaction amount
 authorizationAmount                     |decimal             |False       |Authorized transaction amount
 authorizationCode                       |string(20)           |True        |Authorization code assigned to the transaction
