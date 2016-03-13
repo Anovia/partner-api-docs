@@ -1,4 +1,4 @@
-# partner-api-docs v0.3.1
+# partner-api-docs v0.4.0
 Documentation for Anovia's REST API for partner lead submission, on boarding, and reporting.
 
 ---
