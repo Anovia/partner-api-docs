@@ -103,9 +103,13 @@ Tokens are valid for 1 hour. If you make a request with an invalid token, you wi
 
 To test authentication, you can submit a GET request to {{host}}/api. If you receive a 200 reponse code, you're doing it right.
 
-### Response Format
+### API Samples
 
-The Anovia API uses [JSONAPI](http://jsonapi.org) to format responses. 
+The Anovia API uses [JSONAPI](http://jsonapi.org) to format responses, as described below. Sample responses for each endpoint, as well as sample code for a variety of languages, are available via Postman.
+
+[![Run in Postman](https://run.pstmn.io/button.svg)](https://www.getpostman.com/run-collection/7b0ee3c91ba0a64a8c59#?env%5BAnovia%20Partner%20Test%20Environment%5D=W3sia2V5IjoiaG9zdCIsInZhbHVlIjoiaHR0cHM6Ly9hcGl0ZXN0LmFudm92aWFwYXltZW50cy5jb20iLCJ0eXBlIjoidGV4dCIsImVuYWJsZWQiOnRydWV9LHsia2V5IjoiYmFzZTY0X2tleV9wYWlyIiwidmFsdWUiOiIiLCJ0eXBlIjoidGV4dCIsImVuYWJsZWQiOnRydWV9LHsia2V5IjoiYWNjZXNzX3Rva2VuIiwidmFsdWUiOiIiLCJ0eXBlIjoidGV4dCIsImVuYWJsZWQiOnRydWV9LHsia2V5IjoibWVyY2hhbnRfaWQiLCJ2YWx1ZSI6IiIsInR5cGUiOiJ0ZXh0IiwiZW5hYmxlZCI6dHJ1ZX0seyJrZXkiOiJiYXRjaF9pZCIsInZhbHVlIjoiIiwidHlwZSI6InRleHQiLCJlbmFibGVkIjp0cnVlfSx7ImtleSI6ImRlcG9zaXRfaWQiLCJ2YWx1ZSI6IiIsInR5cGUiOiJ0ZXh0IiwiZW5hYmxlZCI6dHJ1ZX0seyJrZXkiOiJmZWVfaWQiLCJ2YWx1ZSI6IiIsInR5cGUiOiJ0ZXh0IiwiZW5hYmxlZCI6dHJ1ZX0seyJrZXkiOiJsZWFkX2lkIiwidmFsdWUiOiIiLCJ0eXBlIjoidGV4dCIsImVuYWJsZWQiOnRydWV9LHsia2V5IjoicmVzaWR1YWxfaWQiLCJ2YWx1ZSI6IiIsInR5cGUiOiJ0ZXh0IiwiZW5hYmxlZCI6dHJ1ZX0seyJrZXkiOiJzdGF0ZW1lbnRfaWQiLCJ2YWx1ZSI6IiIsInR5cGUiOiJ0ZXh0IiwiZW5hYmxlZCI6dHJ1ZX0seyJrZXkiOiJ0cmFuc2FjdGlvbl9pZCIsInZhbHVlIjoiIiwidHlwZSI6InRleHQiLCJlbmFibGVkIjp0cnVlfV0=)
+
+
 
 Request an object by id:
 
@@ -439,11 +443,11 @@ merchant                                |string(13)          |False       |The i
 statement                               |string(13)          |False       |The id of the related statement
 processorName                           |string(20)          |False       |The name of the processing platform
 feeTitle                                |string(140)         |False       |The title of the specific fee item being assessed, ex. '1099 Fee', 'PCI Non Compliance Fee', 'Visa Assessments'
-feeType                                 |string(20)          |False       |Type of fee being assessed, ex. 'Authorization Fees', 'Card Brand Fees', 'Transaction Fees'
+feeCategory                             |string(20)          |False       |Values: <br>Authorization Trxns<br>Authorization Other<br>Data Capture Trxns<br>Data Capture Other<br>Exceptions<br>Debit Network<br>EBT<br>MISC Per Item Fees<br>MISC Fixed Fees<br>Interchange<br>Individual Plan<br>Discount **<br>Card Brand Fees
 totalTransactionAmount                  |decimal             |False       |The dollar amount of the transactions
-totalTransactionCount                   |int            	 |False       |The number of transactions in this rate category
-rate                                    |decimal             |False       |The dollar value of the rate assessed
-rateType                                |string(20)          |False       |The type of rate being assessed, either 'percentage' or 'per item'
+totalTransactionCount                   |int            	   |False       |The number of transactions in this rate category
+perItemRate                             |decimal             |True        |The dollar value of fees assessed per each item counted in totalTransactionCount
+percentageRate                          |decimal             |True        |The percentage of the totalTransactionAmount that is charged for this fee
 paid                                    |decimal             |False       |Value of fees collected
 due                                     |decimal             |False       |Dollar value of total fees due
 total                                   |decimal             |False       |Net value of fees paid vs. fees due
@@ -472,6 +476,7 @@ depositDate                             |date                |False       |(YYYY
 routingNumber                           |string(9)           |True        |ABA number of merchants designated depository institution.
 accountNumber                           |string(40)          |True        |Settlement account designated by merchant at the depository institution.
 depositAmount                           |decimal             |False       |Dollar value of the merchant deposit.
+nonSettledTransactionAmount             |decimal             |True        |The sum of sales that were processed in this deposit period, but not settled to the merchant's bank account. Example: AMEX ESA, 100% Reserve
 period                                  |int                 |False       |(YYYYMM) The year and month this deposit occurred
 
 ## Batches
@@ -497,8 +502,6 @@ processorName                           |string(20)          |False       |The n
 batchDate                               |date                |False       |(YYYY-MM-DD) Date batch was processed
 totalTransactionAmount                  |decimal             |False       |Total value of processed transactions
 totalTransactionCount                   |int                 |False       |Number of settled transactions processed in the batch
-nonSettledTransactionAmount             |decimal             |True        |The amount of sales that were processed in the batch but not settled
-settledTransactionAmount                |decimal             |True        |The amount of sales that were processed in the batch and settled
 terminalName                            |string(20)          |True        |A short descriptor of the product being used. Ex: 'VX520', 'BridgePay', 'Auth.net'
 terminalIdentifier                      |string(20)          |True        |The id of the terminal used to process the transaction
 period                                  |int                 |False       |(YYYYMM) The year and month this batch was processed
@@ -524,9 +527,9 @@ processorName                           |string(20)          |False       |The n
 accountNumber                           |string(16)          |False       |The account number associated with the customer's form of payment. For payment card transactions, this will be the masked account number. ex: 123456XXXXXX1234
 transactionDate                         |date                |False       |Date the transaction was initiated  
 paymentType                             |string(20)          |False       |Form of payment used by the customer/cardholder 
-transactionAmount                       |decimal             |False       |Original transaction amount
+transactionAmount                       |decimal             |False       |Captured transaction amount
 authorizationAmount                     |decimal             |False       |Authorized transaction amount
-authorizationCode                       |string(20)           |True        |Authorization code assigned to the transaction
+authorizationCode                       |string(20)          |True        |Authorization code assigned to the transaction
 terminalName                            |string(20)          |True        |A short descriptor of the product being used. Ex: 'VX520', 'BridgePay', 'Auth.net'
 terminalIdentifier                      |string(20)          |True        |The id of the terminal used to process the transaction
 merchantIdentifier                      |string(128)         |True        |An identifier for this transaction from the merchant's POS system
