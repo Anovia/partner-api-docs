@@ -1,4 +1,4 @@
-# partner-api-docs v0.4.0
+# partner-api-docs v0.5.0
 Documentation for Anovia's REST API for partner lead submission, on boarding, and reporting.
 
 ---
@@ -261,6 +261,7 @@ Method  |Route                                  |Description
 POST    |/leads                                 |Create a new lead
 GET     |/leads                                 |Returns a collection of leads
 GET     |/leads/:id                             |Returns a lead by it's id
+PUT     |/leads/:id                             |Allows updating a lead's tags. All other edits will be ignored. When using PUT, existing tags will be updated, new tags will be added. Updates to merchant/lead tags are distinct operations, so if you want to update a lead's tags and it's merchants, you would need to make those calls separately.
 GET     |/leads/:id/merchants                   |Returns all merchants for a specific lead
 
 ### Lead Schema
@@ -281,14 +282,14 @@ submitterPhone                          |string(10)          |True        |False
 submitterPhoneExtension                 |string(8)           |True        |False       |The phone number extension of the agent/employee who submitted the lead
 submitterEmail                          |string(140)         |True        |False       |The email address of the agent/employee who submitted the lead
 channelName                             |string(36)          |False       |True        |The sales channel to which this lead should be added. Possible values will be provided to you by your relationship manager
-tags                                    |object              |True        |False       |JSON object containing key:value pairs for customizing your reporting. Will be passed along to merchant record.
-tags.key                                |string(20)          |True        |False       |Key by which a tag can be referenced. Keys must be unique.
+tags                                    |object              |True        |False       |JSON object containing key:value pairs for customizing your reporting. Tags will be copied to related merchants ONLY on creation of merchant record.
+tags.key                                |string(36)          |True        |False       |Key by which a tag can be referenced. Keys must be unique.
 tags.value                              |string(36)          |True        |False       |Value of an individual tag
 status                                  |string(36)          |True        |-           |The current status of the lead (see below for values)
 receivedDate                            |date                |False       |-           |(YYYY-MM-DD) The date the lead was received 
 signedDate                              |date                |True        |-           |(YYYY-MM-DD) The date the lead signed their processing agreement
 lostDate                                |date                |True        |-           |(YYYY-MM-DD) THe date the lead was lost (hopefully this is null!)
-countryCode                             |string(2)           |False       |True        |The country the business is located in. Currently either 'US' or 'CA'
+countryCode                             |string(2)           |False       |True        |The country the business is located in. <br>Values: <br>US<br>CA
 
 ## Lead Statuses
 
@@ -317,6 +318,7 @@ Method  |Route                                  |Description
 --------|---------------------------------------|-------------
 GET     |/merchants                             |Returns a collection of merchants
 GET     |/merchants/:id                         |Returns a merchant by it's id
+PUT     |/merchants/:id                         |Allows updating a merchant's tags. All other edits will be ignored. Existing tags will be updated, new tags will be added. Updates to merchant/lead tags are distinct operations, so if you want to update a lead's tags and it's merchants, you would need to make those calls separately.
 GET     |/merchants/:id/residuals               |Returns all residuals for a specific merchant
 GET     |/merchants/:id/statements              |Returns all statements for a specific merchant
 GET     |/merchants/:id/fees                    |Returns all fees for a specific merchant
@@ -331,14 +333,14 @@ Name                                    |Type                |Allow Null  |Descr
 id                                      |string(13)          |False       |Anovia's unique identifier for merchant records
 mid                                     |string(20)          |True        |Processing platform's ID for this merchant account
 lead                                    |string(13)          |False       |The id of the related lead
+dbaName                                 |string(140)         |True        |The Doing Business As name for this merchant
 processorName                           |string(20)          |True        |The name of the processing platform
 externalIdentifier                      |string(36)          |True        |The identifier provided when you submitted the related Lead
-dbaName                                 |string(140)         |True        |The Doing Business As name for this merchant
 submitterIdentifier                     |string(36)          |True        |The id you provided for tracking your agent/employee who submitted the merchant's Lead 
-countryCode                             |string(2)           |False       |The two letter country code where the merchant transacts business
+countryCode                             |string(2)           |False       |The two letter country code where the merchant transacts business<br>Values: <br>US<br>CA
 channelName                             |string(36)          |False       |The sales channel you provided for the merchant's Lead
 tags                                    |object              |True        |Object containing key:value pairs for customizing your reporting. Inherited from lead record.
-tags.key                                |string(20)          |True        |Key by which a tag can be referenced
+tags.key                                |string(36)          |True        |Key by which a tag can be referenced
 tags.value                              |string(36)          |True        |Value of an individual tag
 status                                  |string(36)          |True        |The current status of the merchant (see below for values)
 createdDate                             |date                |False       |(YYYY-MM-DD) The date the merchant record was created 
@@ -355,6 +357,7 @@ QA                    |Merchant has signed agreement, data being reviewed for ac
 Underwriting          |Performing KYC checks, decisioning account
 Boarding              |Account approved, configuring platform
 Product               |Equipment/Services being configured/shipped/deployed
+Install               |Contacting merchant to confirm receipt of hardware and run test transaction
 Active                |Merchant has processed their first transaction
 Closed                |Merchant account has been closed and/or deactivated
 
@@ -444,13 +447,13 @@ statement                               |string(13)          |False       |The i
 processorName                           |string(20)          |False       |The name of the processing platform
 feeTitle                                |string(140)         |False       |The title of the specific fee item being assessed, ex. '1099 Fee', 'PCI Non Compliance Fee', 'Visa Assessments'
 feeCategory                             |string(20)          |False       |Values: <br>Authorization Trxns<br>Authorization Other<br>Data Capture Trxns<br>Data Capture Other<br>Exceptions<br>Debit Network<br>EBT<br>MISC Per Item Fees<br>MISC Fixed Fees<br>Interchange<br>Individual Plan<br>Discount **<br>Card Brand Fees
-totalTransactionAmount                  |decimal             |False       |The dollar amount of the transactions
-totalTransactionCount                   |int            	   |False       |The number of transactions in this rate category
-perItemRate                             |decimal             |True        |The dollar value of fees assessed per each item counted in totalTransactionCount
-percentageRate                          |decimal             |True        |The percentage of the totalTransactionAmount that is charged for this fee
-paid                                    |decimal             |False       |Value of fees collected
-due                                     |decimal             |False       |Dollar value of total fees due
-total                                   |decimal             |False       |Net value of fees paid vs. fees due
+feeVolume                               |decimal             |False       |The sum of transactions to which this fee was applied
+feeCount                                |int            	   |False       |The number of transactions to which this fee was applied
+perItemRate                             |decimal             |True        |The amount of fees assessed per each item in feeItemCount
+percentageRate                          |decimal             |True        |The percentage of the feeVolume that is charged for this fee
+feeAmount                               |decimal             |False       |Sum of (feeVolume x percentageRate) + (feeItemCount x perItemRate)
+feePaid                                 |decimal             |False       |Value of fees alread paid (ex: if a merchant's fees are billed daily vs monthly)
+feeDue                                  |decimal             |False       |feeAmount - feePaid. This amount will be deducted from the merchant's bank account at month end 
 period                                  |int                 |False       |(YYYYMM) The year and month this fee was billed
 
 ## Deposits
@@ -476,7 +479,7 @@ depositDate                             |date                |False       |(YYYY
 routingNumber                           |string(9)           |True        |ABA number of merchants designated depository institution.
 accountNumber                           |string(40)          |True        |Settlement account designated by merchant at the depository institution.
 depositAmount                           |decimal             |False       |Dollar value of the merchant deposit.
-nonSettledTransactionAmount             |decimal             |True        |The sum of sales that were processed in this deposit period, but not settled to the merchant's bank account. Example: AMEX ESA, 100% Reserve
+nonSettledAmount                        |decimal             |True        |The sum of sales that were processed in this deposit period, but not settled to the merchant's bank account. Example: AMEX ESA, 100% Reserve, MRA
 period                                  |int                 |False       |(YYYYMM) The year and month this deposit occurred
 
 ## Batches
@@ -525,7 +528,7 @@ merchant                                |string(13)          |False       |The i
 batch                                   |string(13)          |False       |The id of the related batch
 processorName                           |string(20)          |False       |The name of the processing platform
 accountNumber                           |string(16)          |False       |The account number associated with the customer's form of payment. For payment card transactions, this will be the masked account number. ex: 123456XXXXXX1234
-transactionDate                         |date                |False       |Date the transaction was initiated  
+transactionDate                         |date                |False       |(YYYY-MM-DD) Date the transaction was initiated  
 paymentType                             |string(20)          |False       |Form of payment used by the customer/cardholder 
 transactionAmount                       |decimal             |False       |Captured transaction amount
 authorizationAmount                     |decimal             |False       |Authorized transaction amount
