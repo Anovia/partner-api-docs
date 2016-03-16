@@ -1,4 +1,4 @@
-# partner-api-docs v0.5.0
+# partner-api-docs v0.5.1
 Documentation for Anovia's REST API for partner lead submission, on boarding, and reporting.
 
 ---
@@ -72,11 +72,11 @@ __Statement__: A monthly summary of a merchant's fees, deposits, and batches.
 
 __Fee__: A monthly amount charged for a particular transaction type, product, or service.
 
-__Deposit__: A daily summary of funds depositied to a merchant's bank account for their processing revenue.
+__Deposit__: A daily summary of funds deposited to a merchant's bank account for their processing revenue.
 
 __Batch__: A group of authorized transactions that are submitted to the acquirer for settlement. Batches are usually settled daily, but this can also occur multiple times in a day, or every few days.
 
-__Transaction__: A settled transaction between cardholder and merchant. Please note that only transactions that have been settled in a batch are reported at this time.
+__Transaction__: A captured transaction between cardholder and merchant. Please note that only transactions that have been settled in a batch are reported at this time.
 
 ---
 ## Authentication
@@ -246,6 +246,7 @@ Status Code      |Description                  |Details
 400              |Bad Request                  |Error parsing request
 401              |Unauthorized                 |Error authenticating with your API credentials
 403              |Forbidden                    |You do not have permission for this resource
+404              |Not Found                    |Resource not found
 422              |Unprocessable Entity         |Request well-formed, but errors in syntax (check query string)
 500              |Internal Server Error        |Oops, we broke something
 501              |Not Implemented              |Endpoint exists, but is not yet implemented
@@ -261,7 +262,8 @@ Method  |Route                                  |Description
 POST    |/leads                                 |Create a new lead
 GET     |/leads                                 |Returns a collection of leads
 GET     |/leads/:id                             |Returns a lead by it's id
-PUT     |/leads/:id                             |Allows updating a lead's tags. All other edits will be ignored. When using PUT, existing tags will be updated, new tags will be added. Updates to merchant/lead tags are distinct operations, so if you want to update a lead's tags and it's merchants, you would need to make those calls separately.
+GET     |/leads/:id/tags                        |Returns a lead's tags object
+PUT     |/leads/:id/tags                        |Allows updating a lead's tags. All other edits will be ignored. When using PUT, existing tags will be updated, new tags will be added. Updates to merchant/lead tags are distinct operations, so if you want to update a lead's tags and it's merchants, you would need to make those calls separately.
 GET     |/leads/:id/merchants                   |Returns all merchants for a specific lead
 
 ### Lead Schema
@@ -305,7 +307,7 @@ Qualifying            |First contact attempted
 Contact in Progress   |Decision maker reached via phone or email
 Proposal Presented    |A pricing proposal has been provided to the merchant
 Waiting for Info      |Anovia Account Executive is waiting on additional information from the merchant
-Out for Signature     |A processing agreemtn has been provided to the merchant and is awaiting their signature
+Out for Signature     |A processing agreement has been provided to the merchant and is awaiting their signature
 Signed                |The merchant has signed the agreement, deal has been submitted to underwriting
 Lost                  |The merchant has decided not to process payments with Anovia
 
@@ -318,7 +320,8 @@ Method  |Route                                  |Description
 --------|---------------------------------------|-------------
 GET     |/merchants                             |Returns a collection of merchants
 GET     |/merchants/:id                         |Returns a merchant by it's id
-PUT     |/merchants/:id                         |Allows updating a merchant's tags. All other edits will be ignored. Existing tags will be updated, new tags will be added. Updates to merchant/lead tags are distinct operations, so if you want to update a lead's tags and it's merchants, you would need to make those calls separately.
+GET     |/merchants/:id/tags                    |Returns an merchant's tags object
+PUT     |/merchants/:id/tags                    |Allows updating a merchant's tags. All other edits will be ignored. Existing tags will be updated, new tags will be added. Updates to merchant/lead tags are distinct operations, so if you want to update a lead's tags and it's merchants, you would need to make those calls separately.
 GET     |/merchants/:id/residuals               |Returns all residuals for a specific merchant
 GET     |/merchants/:id/statements              |Returns all statements for a specific merchant
 GET     |/merchants/:id/fees                    |Returns all fees for a specific merchant
@@ -446,12 +449,12 @@ merchant                                |string(13)          |False       |The i
 statement                               |string(13)          |False       |The id of the related statement
 processorName                           |string(20)          |False       |The name of the processing platform
 feeTitle                                |string(140)         |False       |The title of the specific fee item being assessed, ex. '1099 Fee', 'PCI Non Compliance Fee', 'Visa Assessments'
-feeCategory                             |string(20)          |False       |Values: <br>Authorization Trxns<br>Authorization Other<br>Data Capture Trxns<br>Data Capture Other<br>Exceptions<br>Debit Network<br>EBT<br>MISC Per Item Fees<br>MISC Fixed Fees<br>Interchange<br>Individual Plan<br>Discount **<br>Card Brand Fees
+feeCategory                             |string(20)          |False       |Values: <br>Authorization<br>Data Capture<br>Exceptions<br>Debit Network<br>EBT<br>MISC Fees<br>Interchange<br>Individual Plan<br>Discount **<br>Card Brand Fees
 feeVolume                               |decimal             |False       |The sum of transactions to which this fee was applied
 feeCount                                |int            	   |False       |The number of transactions to which this fee was applied
-perItemRate                             |decimal             |True        |The amount of fees assessed per each item in feeItemCount
+perItemRate                             |decimal             |True        |The amount of fees assessed per each item in feeCount
 percentageRate                          |decimal             |True        |The percentage of the feeVolume that is charged for this fee
-feeAmount                               |decimal             |False       |Sum of (feeVolume x percentageRate) + (feeItemCount x perItemRate)
+feeAmount                               |decimal             |False       |Sum of (feeVolume x percentageRate) + (feeCount x perItemRate)
 feePaid                                 |decimal             |False       |Value of fees alread paid (ex: if a merchant's fees are billed daily vs monthly)
 feeDue                                  |decimal             |False       |feeAmount - feePaid. This amount will be deducted from the merchant's bank account at month end 
 period                                  |int                 |False       |(YYYYMM) The year and month this fee was billed
