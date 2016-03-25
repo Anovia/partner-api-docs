@@ -1,4 +1,4 @@
-# partner-api-docs v0.5.1
+# partner-api-docs v0.6.0
 Documentation for Anovia's REST API for partner lead submission, on boarding, and reporting.
 
 ---
@@ -263,7 +263,8 @@ POST    |/leads                                 |Create a new lead
 GET     |/leads                                 |Returns a collection of leads
 GET     |/leads/:id                             |Returns a lead by it's id
 GET     |/leads/:id/tags                        |Returns a lead's tags object
-PUT     |/leads/:id/tags                        |Allows updating a lead's tags. All other edits will be ignored. When using PUT, existing tags will be updated, new tags will be added. Updates to merchant/lead tags are distinct operations, so if you want to update a lead's tags and it's merchants, you would need to make those calls separately.
+POST    |/leads/:id/tags                        |Add tags to an existing lead. Tags with new keys will be added, tags with existing keys will be ignored.
+PUT     |/leads/:id/tags                        |Update a lead's tags. <br> **NOTE** PUT'ing tags will replace all tags for a lead, so when using PUT, send ALL tags that should exist for that lead. <br> All attributes outside of tags object will be ignored. When using PUT, existing tags will be updated, new tags will be added. Updates to merchant/lead tags are distinct operations, so if you want to update a lead's tags and it's merchants, you would need to make those calls separately.
 GET     |/leads/:id/merchants                   |Returns all merchants for a specific lead
 
 ### Lead Schema
@@ -321,7 +322,8 @@ Method  |Route                                  |Description
 GET     |/merchants                             |Returns a collection of merchants
 GET     |/merchants/:id                         |Returns a merchant by it's id
 GET     |/merchants/:id/tags                    |Returns an merchant's tags object
-PUT     |/merchants/:id/tags                    |Allows updating a merchant's tags. All other edits will be ignored. Existing tags will be updated, new tags will be added. Updates to merchant/lead tags are distinct operations, so if you want to update a lead's tags and it's merchants, you would need to make those calls separately.
+POST    |/merchants/:id/tags                    |Add tags to an existing merchant. Tags with new keys will be added, tags with existing keys will be ignored.
+PUT     |/merchants/:id/tags                    |Update a merchant's tags. <br> **NOTE** PUT'ing tags will replace all tags for a merchant, so when using PUT, send ALL tags that should exist for that merchant. <br> All attributes outside of tags object will be ignored. When using PUT, existing tags will be updated, new tags will be added. Updates to merchant/lead tags are distinct operations, so if you want to update a lead's tags and it's merchants, you would need to make those calls separately.
 GET     |/merchants/:id/residuals               |Returns all residuals for a specific merchant
 GET     |/merchants/:id/statements              |Returns all statements for a specific merchant
 GET     |/merchants/:id/fees                    |Returns all fees for a specific merchant
