@@ -388,15 +388,13 @@ processorName                           |string(20)          |False       |The n
 externalIdentifier                      |string(36)          |True        |The identifier provided when you submitted the related Lead
 dbaName                                 |string(140)         |False       |The Doing Business As name for this merchant
 submitterIdentifier                     |string(36)          |True        |The id you provided for tracking your agent/employee who submitted the merchant's Lead
-signedVolume                            |decimal             |False       |The monthly volume the merchant projected when they signed their processing agreement
-volume                                  |decimal             |False       |The merchant's actual volume for the period
-totalFees                               |decimal             |False       |The total fees due from the merchant for the period
-collectedFees                           |decimal             |False       |The total fees collected from the merchant for the period
-nonProcessingFees                       |decimal             |False       |Fees assessed to the merchant but excluded from residual calculation
+count                                   |int                 |False       |The number of items
+volume                                  |decimal             |False       |The merchant's volume for the period
+expense                                 |decimal             |False       |The total expenses for the period
+income                                  |decimal             |False       |The total income for the period
 adjustments                             |decimal             |False       |Adjustments made to correct errors in prior residual statements
-netRevenue                              |decimal             |False       |Total Fees minus Non-Processing Fees, plus Adjustments
-residualPercentage                      |decimal             |False       |The percentage of fees that you receive per your referral agreement for this merchant
-residualAmount                          |decimal             |False       |Net Revenue multiplied by Residual Percentage
+profit                                  |decimal             |False       |Income minus Expenses
+residualAmount                          |decimal             |False       |Net residual amount calculated based on agreed upon residual percentages/amounts
 channelName                             |string(36)          |False       |The sales channel you provided for the merchant's Lead
 period                                  |int                 |False       |(YYYYMM) The year and month this residual pertains to
 
