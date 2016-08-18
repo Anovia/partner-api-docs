@@ -389,13 +389,13 @@ processorName                           |string(20)          |False       |The n
 externalIdentifier                      |string(36)          |True        |The identifier provided when you submitted the related Lead
 dbaName                                 |string(140)         |False       |The Doing Business As name for this merchant
 submitterIdentifier                     |string(36)          |True        |The id you provided for tracking your agent/employee who submitted the merchant's Lead
-totalCount                              |int                 |False       |The count of transactions in this statement period
-volume                                  |decimal             |False       |The merchant's actual volume for the period
-income                                  |decimal             |True        |The total income generated for this merchant account
-expense                                 |decimal             |True        |The total expenses applied for this merchant account
-adjustments                             |decimal             |True        |Adjustments made to correct errors in prior residual statements 
-profit                                  |decimal             |True        |Total Income minus Expenses, plus Adjustments
-residualAmount                          |decimal             |True        |Calculated residual amount based on Profit and the contracted residual share
+count                                   |int                 |False       |The number of items
+volume                                  |decimal             |False       |The merchant's volume for the period
+expense                                 |decimal             |False       |The total expenses for the period
+income                                  |decimal             |False       |The total income for the period
+adjustments                             |decimal             |False       |Adjustments made to correct errors in prior residual statements
+profit                                  |decimal             |False       |Income minus Expenses
+residualAmount                          |decimal             |False       |Net residual amount calculated based on agreed upon residual percentages/amounts
 channelName                             |string(36)          |False       |The sales channel you provided for the merchant's Lead
 period                                  |int                 |False       |(YYYYMM) The year and month this residual pertains to
 
