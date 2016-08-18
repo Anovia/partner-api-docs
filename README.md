@@ -1,4 +1,4 @@
-# partner-api-docs v0.6.0
+# partner-api-docs v0.7.0
 Documentation for Anovia's REST API for partner lead submission, on boarding, and reporting.
 
 ---
@@ -24,6 +24,7 @@ Documentation for Anovia's REST API for partner lead submission, on boarding, an
 - [Statements](#statements)
 - [Fees](#fees)
 - [Deposits](#deposits)
+- [Deposit Totals](#depositTotals)
 - [Batches](#batches)
 - [Transactions](#transactions)
 
@@ -388,15 +389,13 @@ processorName                           |string(20)          |False       |The n
 externalIdentifier                      |string(36)          |True        |The identifier provided when you submitted the related Lead
 dbaName                                 |string(140)         |False       |The Doing Business As name for this merchant
 submitterIdentifier                     |string(36)          |True        |The id you provided for tracking your agent/employee who submitted the merchant's Lead
-signedVolume                            |decimal             |False       |The monthly volume the merchant projected when they signed their processing agreement
+totalCount                              |int                 |False       |The count of transactions in this statement period
 volume                                  |decimal             |False       |The merchant's actual volume for the period
-totalFees                               |decimal             |False       |The total fees due from the merchant for the period
-collectedFees                           |decimal             |False       |The total fees collected from the merchant for the period
-nonProcessingFees                       |decimal             |False       |Fees assessed to the merchant but excluded from residual calculation
-adjustments                             |decimal             |False       |Adjustments made to correct errors in prior residual statements
-netRevenue                              |decimal             |False       |Total Fees minus Non-Processing Fees, plus Adjustments
-residualPercentage                      |decimal             |False       |The percentage of fees that you receive per your referral agreement for this merchant
-residualAmount                          |decimal             |False       |Net Revenue multiplied by Residual Percentage
+income                                  |decimal             |True        |The total income generated for this merchant account
+expense                                 |decimal             |True        |The total expenses applied for this merchant account
+adjustments                             |decimal             |True        |Adjustments made to correct errors in prior residual statements 
+profit                                  |decimal             |True        |Total Income minus Expenses, plus Adjustments
+residualAmount                          |decimal             |True        |Calculated residual amount based on Profit and the contracted residual share
 channelName                             |string(36)          |False       |The sales channel you provided for the merchant's Lead
 period                                  |int                 |False       |(YYYYMM) The year and month this residual pertains to
 
@@ -469,7 +468,6 @@ Method  |Route                                  |Description
 --------|---------------------------------------|-------------
 GET     |/deposits                              |Returns a collection of deposits
 GET     |/deposits/:id                          |Returns a deposit by it's id
-GET     |/deposits/:id/batches                  |Returns all batches for a specific deposit
 
 ### Schema
 
@@ -486,6 +484,37 @@ accountNumber                           |string(40)          |True        |Settl
 depositAmount                           |decimal             |False       |Dollar value of the merchant deposit.
 nonSettledAmount                        |decimal             |True        |The sum of sales that were processed in this deposit period, but not settled to the merchant's bank account. Example: AMEX ESA, 100% Reserve, MRA
 period                                  |int                 |False       |(YYYYMM) The year and month this deposit occurred
+
+## Deposit Totals
+
+### Deposit Total Routes
+
+Method  |Route                                  |Description
+--------|---------------------------------------|-------------
+GET     |/deposits/totals                       |Returns a collection of deposit totals
+GET     |/deposits/totals/:date                 |Returns a collection of deposit totals for a specific date (YYYY/MM/DD)
+
+### Schema
+
+Name                                    |Type                |Allow Null  |Description
+----------------------------------------|--------------------|------------|-------------
+mid                                     |string(20)          |False       |Processing platform's ID for this merchant account
+merchant                                |string(13)          |False       |The id of the related merchant
+processorName                           |string(20)          |False       |The name of the processing platform
+depositDate                             |date                |False       |(YYYY-MM-DD) Business date the merchant should receive deposit.
+netDepositAmount                        |decimal             |False       |Amount after chargebacks, credits, and daily fees are removed but prior to other withheld amounts.
+actualDepositAmount                     |decimal             |False       |Amount actually deposited to the merchant account.
+settledAmount                           |decimal             |False       |Amount settled/paid to the merchant.
+nonSettledAmount                        |decimal             |True        |Amount not paid to the merchant.  Activity in the batch that is not qualified for ACH.
+dailyFeeAmount                          |decimal             |True        |Amount of daily fees deducted from the merchant.
+disqualifiedAmount                      |decimal             |True        |Amount that initially qualified for ACH during processing, but then determined to not qualify for ACH at the time of ACH run.
+suspenseFundingHeldAmount               |decimal             |True        |Amount withheld from the merchant due to suspense funding settings
+suspenseFundingReleasedAmount           |decimal             |True        |Amount released back to merchant from suspense funding.
+reserveFundingHeldAmount                |decimal             |True        |Amount withheld from the merchant due to reserve funding settings.
+reserveFundingReleasedAmount            |decimal             |True        |Amount released back to merchant from reserve funding.
+cashAdvanceHeldAmount                   |decimal             |True        |Any amount withheld for cash advance provider processes.
+federalBackupWithholdingAmount          |decimal             |True        |Amount withheld for IRS backup withholding.
+stateBackupWitholdingAmount             |decimal             |True        |Amount withheld for state backup withholding.
 
 ## Batches
 
@@ -505,7 +534,6 @@ id                                      |string(13)          |False       |Anovi
 mid                                     |string(20)          |True        |Processing platform's ID for this merchant account
 merchant                                |string(13)          |False       |The id of the related merchant
 statement                               |string(13)          |False       |The id of the related statement
-deposit                                 |string(13)          |False       |The id of the related deposit
 processorName                           |string(20)          |False       |The name of the processing platform
 batchDate                               |date                |False       |(YYYY-MM-DD) Date batch was processed
 totalTransactionAmount                  |decimal             |False       |Total value of processed transactions
