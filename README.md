@@ -24,9 +24,18 @@ Documentation for Anovia's REST API for partner lead submission, on boarding, an
 - [Statements](#statements)
 - [Fees](#fees)
 - [Deposits](#deposits)
-- [Deposit Totals](#depositTotals)
+- [Deposit Totals](#deposit-totals)
 - [Batches](#batches)
 - [Transactions](#transactions)
+
+[Sub-Doc Schemas](#sub-doc-schemas)
+
+- [Product Schema](#product-schema)
+- [Bank Account Schema](#bank-account-schema)
+- [Principal Schema](#principal-schema)
+- [Address Schema](#address-schema)
+
+[Webhooks](#webhooks)
 
 [Query Syntax](#query-syntax)
 
@@ -74,6 +83,8 @@ __Statement__: A monthly summary of a merchant's fees, deposits, and batches.
 __Fee__: A monthly amount charged for a particular transaction type, product, or service.
 
 __Deposit__: A daily summary of funds deposited to a merchant's bank account for their processing revenue.
+
+__Deposit Totals__: A daily breakdown of where funds for a particular deposit were routed. 
 
 __Batch__: A group of authorized transactions that are submitted to the acquirer for settlement. Batches are usually settled daily, but this can also occur multiple times in a day, or every few days.
 
@@ -312,14 +323,19 @@ Waiting for Info      |Anovia Account Executive is waiting on additional informa
 Out for Signature     |A processing agreement has been provided to the merchant and is awaiting their signature
 Signed                |The merchant has signed the agreement, deal has been submitted to underwriting
 Lost                  |The merchant has decided not to process payments with Anovia
+eSig Exceptions       |A processing agreement was sent to the merchant for signature, but there is currently an error during the signing process
 
 
 ## Merchants
+
+> Note: creating new merchants is reserved for parters on our Payment Facilitation platform. Unlike traditional merchant accounts, these accounts (elsewhere referred to as 'sub-merchants',
+have pre-determined pricing and product configuration, as well as an executed agreement.)
 
 ### Merchant Routes
 
 Method  |Route                                  |Description
 --------|---------------------------------------|-------------
+POST    |/merchants                             |Create a new merchant, for ProPay sub-merchants only.
 GET     |/merchants                             |Returns a collection of merchants
 GET     |/merchants/:id                         |Returns a merchant by it's id
 GET     |/merchants/:id/tags                    |Returns an merchant's tags object
@@ -334,26 +350,36 @@ GET     |/merchants/:id/transactions            |Returns all transactions for a 
 
 ### Merchant Schema
 
-Name                                    |Type                |Allow Null  |Description
-----------------------------------------|--------------------|------------|-------------
-id                                      |string(13)          |False       |Anovia's unique identifier for merchant records
-mid                                     |string(20)          |True        |Processing platform's ID for this merchant account
-lead                                    |string(13)          |False       |The id of the related lead
-dbaName                                 |string(140)         |True        |The Doing Business As name for this merchant
-processorName                           |string(20)          |True        |The name of the processing platform
-externalIdentifier                      |string(36)          |True        |The identifier provided when you submitted the related Lead
-submitterIdentifier                     |string(36)          |True        |The id you provided for tracking your agent/employee who submitted the merchant's Lead 
-countryCode                             |string(2)           |False       |The two letter country code where the merchant transacts business<br>Values: <br>US<br>CA
-channelName                             |string(36)          |False       |The sales channel you provided for the merchant's Lead
-tags                                    |object              |True        |Object containing key:value pairs for customizing your reporting. Inherited from lead record.
-tags.key                                |string(36)          |True        |Key by which a tag can be referenced
-tags.value                              |string(36)          |True        |Value of an individual tag
-status                                  |string(36)          |True        |The current status of the merchant (see below for values)
-createdDate                             |date                |False       |(YYYY-MM-DD) The date the merchant record was created 
-signedDate                              |date                |True        |(YYYY-MM-DD) The date the merchant's application was signed
-approvedDate                            |date                |True        |(YYYY-MM-DD) The date the merchant was approved by underwriting
-activatedDate                           |date                |True        |(YYYY-MM-DD) The date the merchant processed their first transaction
-deactivatedDate                         |date                |True        |(YYYY-MM-DD) The date the merchant closed their account (hopefully this is null!)
+Name                                    |Type                |Allow Null  |Required     |Description
+----------------------------------------|--------------------|------------|-------------|------------
+id                                      |string(13)          |False       |False        |Anovia's unique identifier for merchant records
+mid                                     |string(20)          |True        |False        |Processing platform's ID for this merchant account
+lead                                    |string(13)          |False       |False        |The id of the related lead
+dbaName                                 |string(140)         |False       |True         |The Doing Business As name for this merchant
+legalName                               |string(140)         |False       |True         |The name of the legal entity for this business, as it appears on tax filing documents
+federalTaxId                            |string(9)           |False       |True         |The Federal Tax ID for this business. If ownership type is Sole Proprietor, this will be the Sole Proprietor's Social Security Number
+ownershipType                           |string(40)          |False       |True         |The ownership type that describes how the business is registred <br/> Values: <br> Sole Proprietor <br>
+acceptTermsAndConditions                |bool                |False       |True         |This value must be set to true, or merchant cannot be added. During the process of signing up for an account, a merchant must explicitly accept the Terms & Conditions of their processing agreement
+processorName                           |string(20)          |True        |True         |The name of the processing platform (Either 'TSYS' or 'ProPay')
+externalIdentifier                      |string(36)          |True        |False        |The identifier provided when you submitted the related Lead
+submitterIdentifier                     |string(36)          |True        |False        |The id you provided for tracking your agent/employee who submitted the merchant's Lead 
+countryCode                             |string(2)           |False       |True         |The two letter country code where the merchant transacts business<br>Values: <br>US<br>CA
+channelName                             |string(36)          |False       |True         |The sales channel you provided for the merchant's Lead
+tags                                    |object              |True        |False        |Object containing key:value pairs for customizing your reporting. Inherited from lead record.
+tags.key                                |string(36)          |True        |False        |Key by which a tag can be referenced
+tags.value                              |string(36)          |True        |False        |Value of an individual tag
+status                                  |string(36)          |True        |False        |The current status of the merchant (see below for values)
+createdDate                             |date                |False       |False        |(YYYY-MM-DD) The date the merchant record was created 
+signedDate                              |date                |True        |False        |(YYYY-MM-DD) The date the merchant's application was signed
+approvedDate                            |date                |True        |False        |(YYYY-MM-DD) The date the merchant was approved by underwriting
+boardedDate                             |date                |True        |False        |(YYYY-MM-DD) The date the merchant configuration was sent to the processing platform
+activatedDate                           |date                |True        |False        |(YYYY-MM-DD) The date the merchant processed their first transaction
+deactivatedDate                         |date                |True        |False        |(YYYY-MM-DD) The date the merchant closed their account (hopefully this is null!)
+products                                |array               |True        |False        |List of products the merchant is using for accepting payemnts (terminals, gateways, etc). See Product Schema for details
+principals                              |array               |False       |True         |List of owners for the business. See Principal Schema for details
+bankAccount                             |bank account object |False       |True         |The bank account where funds will be deposited, and fees will be withdrawn
+dbaAddress                              |address object      |False       |True         |The physical address of the business
+legalAddress                            |address object      |False       |True         |The registered legal address of the business entity
 
 ## Merchant Statuses
 
@@ -366,6 +392,49 @@ Product               |Equipment/Services being configured/shipped/deployed
 Install               |Contacting merchant to confirm receipt of hardware and run test transaction
 Active                |Merchant has processed their first transaction
 Closed                |Merchant account has been closed and/or deactivated
+
+## Sub-Doc Schemas
+
+### Product Schema
+Name                                    |Type                |Allow Null  |Description
+----------------------------------------|--------------------|------------|-------------
+name                                    |string(50)          |False       |The name of the product being used, (Ex: 'VX520', 'BridgePay')
+identifier                              |string(50)          |True        |Processing platform's ID for this product
+configuration                           |object              |True        |Configuration credentials, usually for a gateway or 3rd party product
+configuration.username                  |string(50)          |True        |The username to be used in configuration settings
+configuration.password                  |string(50)          |True        |The password or other secondary key to be used in configuration settings
+configuration.key                       |string(50)          |True        |The API Key or other tertiary key to be used in configuration settings
+
+### Bank Account Schema
+Name                                    |Type                |Allow Null  |Required     |Description
+----------------------------------------|--------------------|------------|-------------|-------------
+bankName                                |string(50)          |True        |True         |The name of the banking institution that issued this bank account
+routingNumber                           |string(9)           |True        |True         |The 9 digit routing number
+accountNumber                           |object              |True        |True         |The bank account number
+accountType                             |string(50)          |True        |True         |Either 'Checking' or 'Savings'
+accountName                             |string(50)          |True        |True         |The name of the account holder (either the business name or individual's name that owns the account)
+
+### Principal Schema
+Name                                    |Type                |Allow Null  |Required     |Description
+----------------------------------------|--------------------|------------|-------------|-------------
+firstName                               |string(50)          |True        |True         |The first name of the principal
+lastName                                |string(50)          |True        |True         |The last name of the principal
+ownershipPercentage                     |int                 |True        |True         |The percentage of the business this principal owns. 60% ownership would be passed as 60
+dob                                     |string(10)          |True        |True         |YYYY-MM-DD date of birth
+ssn                                     |string(50)          |True        |True         |The social security number of the principal
+email                                   |string(50)          |True        |True         |The personal email address of the principal
+phone                                   |string(10)          |True        |True         |The home phone number of the principal (numeric only)
+homeAddress                             |address object      |True        |True         |The home address of the principal
+
+### Address Schema
+Name                                    |Type                |Allow Null  |Required     |Description
+----------------------------------------|--------------------|------------|-------------|-------------
+address1                                |string(50)          |True        |True         |The street number and street (Ex: 123 Main St.)
+address2                                |string(50)          |True        |True         |The suite #, apartment #, etc (Ex: Suite 100 or Apt. #4321)
+city                                    |string(50)          |True        |True         |
+state                                   |string(50)          |True        |True         |The two letter state/province abbreviation
+zip                                     |string(50)          |True        |True         |The postal code
+country                                 |string(50)          |True        |True         |The two letter country code (Either 'US' or 'CA')
 
 ## Residuals
 
@@ -491,17 +560,18 @@ period                                  |int                 |False       |(YYYY
 
 Method  |Route                                  |Description
 --------|---------------------------------------|-------------
-GET     |/deposits/totals                       |Returns a collection of deposit totals
-GET     |/deposits/totals/:date                 |Returns a collection of deposit totals for a specific date (YYYY/MM/DD)
+GET     |/depositTotals                        |Returns a collection of deposit totals
+GET     |/depositTotals/:id                    |Returns a collection of deposit totals for a specific date (YYYY/MM/DD)
 
 ### Schema
 
 Name                                    |Type                |Allow Null  |Description
 ----------------------------------------|--------------------|------------|-------------
+id                                      |string(13)          |False       |Anovia's unique identifier for depositTotal records
 mid                                     |string(20)          |False       |Processing platform's ID for this merchant account
 merchant                                |string(13)          |False       |The id of the related merchant
 processorName                           |string(20)          |False       |The name of the processing platform
-depositDate                             |date                |False       |(YYYY-MM-DD) Business date the merchant should receive deposit.
+depositDate                             |date                |False       |Business date the merchant should receive deposit.
 netDepositAmount                        |decimal             |False       |Amount after chargebacks, credits, and daily fees are removed but prior to other withheld amounts.
 actualDepositAmount                     |decimal             |False       |Amount actually deposited to the merchant account.
 settledAmount                           |decimal             |False       |Amount settled/paid to the merchant.
@@ -569,6 +639,102 @@ authorizationCode                       |string(20)          |True        |Autho
 terminalName                            |string(20)          |True        |A short descriptor of the product being used. Ex: 'VX520', 'BridgePay', 'Auth.net'
 terminalIdentifier                      |string(20)          |True        |The id of the terminal used to process the transaction
 merchantIdentifier                      |string(128)         |True        |An identifier for this transaction from the merchant's POS system
+
+---
+## Webhooks
+
+Anovia's API also provides the option to receive notifications when a lead or merchant's status changes. You can register your webhook endpoints by POST'ing
+to the URLs provided below. Webhook messages will be POST'ed to your endpoint, and will contain a JSON body.
+
+Method  |Route                                  |Description
+--------|---------------------------------------|-------------
+POST    |/webhooks                              |register to receive a new webhook
+GET     |/webhooks                              |get a list of all webhooks currently registered for your organization
+GET     |/webhooks/:id                          |get a specific webhook by id
+POST    |/webhooks/:id                          |update a webhook's uri
+POST    |/webhooks/:id/actions/regenerateToken  |generate a new token for the webhooks specified by the id parameter
+DELETE  |/webhooks/:id                          |remove a webhook subscription
+
+### Webhook Schema
+
+Name                                    |Type                |Allow Null  |Description
+----------------------------------------|--------------------|------------|-------------
+id                                      |string(13)          |False       |The unique identifier of the webhook connection
+token                                   |string(30)          |False       |A token you can use to verify that the webhook message came from Anovia
+hook                                    |string(20)          |False       |The event you are subscribing to. Available Webhooks: <br/> leadStatus - receive a notification when a lead's status changes <br/> merchantStatus - recieve a notification when a merchant's status changes
+uri                                     |string(100)         |False       |The fully qualified URI on your server where webhook messages should be sent.
+
+> **NOTE:** For security purposes, all webhook uri's must be HTTPS
+
+Example Lead Status Webhook Registration Request:
+
+    {
+      data: {
+        type: 'webhooks',
+        attributes: {
+          hook: 'leadStatus',
+          uri: 'https://webhooks.yourdomain.com/anoviaLeadStatus'
+        }
+      }
+    }
+
+Example Lead Status Webhook Registration Response:
+
+    {
+      data: {
+        id: 'LLKFWIJLKDF2342039',
+        type: 'webhooks',
+        attributes: {
+          token: 'RAM2342JEIOFEDK2393',
+          hook: 'leadStatus',
+          uri: 'https://webhooks.yourdomain.com/anoviaLeadStatus'
+        }
+      }
+    }
+
+Example Lead Status Webhook Message:
+
+    {
+      meta: {
+        token: 'RAM2342JEIOFEDK2393'
+      },
+      links: {
+        self: 'api/v1/leads/3NQKBQ'
+      }
+      data: {
+        id: '3NQKBQ',
+        type: 'leads',
+        attributes: {
+          bestTimeToContact: 'mornings',
+          businessName: 'Test Merchant Creation 3',
+          contactName: 'Contact Name',
+          contactPhone: '5551231231',
+          contactEmail: 'testme@email.com',
+          countryCode: 'US',
+          channelName: 'SOMECHANNEL',
+          externalIdentifier: 'YOUREXTID',
+          receivedDate: '2016-08-21T21:31:20.907Z',
+          signedDate: '2016-08-25T21:31:20.907Z',
+          lostDate: null,
+          status: 'Signed',
+          submitterIdentifier: '123901',
+          submitterName: 'Russell Westbrook',
+          submitterPhone: '5551234567',
+          submitterEmail: 'russell@okc.com',
+          tags: {
+            tag1: 'val1',
+            tag2: 'val2',
+            tag3: 'val3'
+          }
+        },
+        links: {
+          self: 'api/v1/leads/3NQKBQ'
+        }
+      },
+      jsonapi: {
+        version: '1.0'
+      }
+    }
 
 ---
 ## Query Syntax
