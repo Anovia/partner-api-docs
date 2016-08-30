@@ -1,4 +1,4 @@
-# partner-api-docs v0.8.0
+# partner-api-docs v0.9.0
 Documentation for Anovia's REST API for partner lead submission, on boarding, and reporting.
 
 ---
@@ -24,7 +24,7 @@ Documentation for Anovia's REST API for partner lead submission, on boarding, an
 - [Statements](#statements)
 - [Fees](#fees)
 - [Deposits](#deposits)
-- [Deposit Totals](#deposit-totals)
+- [Disbursements](#disbursements)
 - [Batches](#batches)
 - [Transactions](#transactions)
 
@@ -84,7 +84,7 @@ __Fee__: A monthly amount charged for a particular transaction type, product, or
 
 __Deposit__: A daily summary of funds deposited to a merchant's bank account for their processing revenue.
 
-__Deposit Totals__: A daily breakdown of where funds for a particular deposit were routed. 
+__Disbursement__: A daily breakdown of where funds for a particular deposit were routed. 
 
 __Batch__: A group of authorized transactions that are submitted to the acquirer for settlement. Batches are usually settled daily, but this can also occur multiple times in a day, or every few days.
 
@@ -554,14 +554,14 @@ depositAmount                           |decimal             |False       |Dolla
 nonSettledAmount                        |decimal             |True        |The sum of sales that were processed in this deposit period, but not settled to the merchant's bank account. Example: AMEX ESA, 100% Reserve, MRA
 period                                  |int                 |False       |(YYYYMM) The year and month this deposit occurred
 
-## Deposit Totals
+## Disbursements
 
-### Deposit Total Routes
+### Disbursement Routes
 
 Method  |Route                                  |Description
 --------|---------------------------------------|-------------
-GET     |/depositTotals                        |Returns a collection of deposit totals
-GET     |/depositTotals/:id                    |Returns a collection of deposit totals for a specific date (YYYY/MM/DD)
+GET     |/disbursements                         |Returns a collection of disbursements
+GET     |/disbursements/:id                     |Returns a collection of disbursements for a specific date (YYYY/MM/DD)
 
 ### Schema
 
@@ -571,9 +571,9 @@ id                                      |string(13)          |False       |Anovi
 mid                                     |string(20)          |False       |Processing platform's ID for this merchant account
 merchant                                |string(13)          |False       |The id of the related merchant
 processorName                           |string(20)          |False       |The name of the processing platform
-depositDate                             |date                |False       |Business date the merchant should receive deposit.
-netDepositAmount                        |decimal             |False       |Amount after chargebacks, credits, and daily fees are removed but prior to other withheld amounts.
-actualDepositAmount                     |decimal             |False       |Amount actually deposited to the merchant account.
+disbursementDate                        |date                |False       |Business date the merchant should receive deposit.
+netDisbursementAmount                   |decimal             |False       |Amount after chargebacks, credits, and daily fees are removed but prior to other withheld amounts.
+actualDisbursementAmount                |decimal             |False       |Amount actually deposited to the merchant account.
 settledAmount                           |decimal             |False       |Amount settled/paid to the merchant.
 nonSettledAmount                        |decimal             |True        |Amount not paid to the merchant.  Activity in the batch that is not qualified for ACH.
 dailyFeeAmount                          |decimal             |True        |Amount of daily fees deducted from the merchant.
