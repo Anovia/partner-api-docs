@@ -571,9 +571,9 @@ id                                      |string(13)          |False       |Anovi
 mid                                     |string(20)          |False       |Processing platform's ID for this merchant account
 merchant                                |string(13)          |False       |The id of the related merchant
 processorName                           |string(20)          |False       |The name of the processing platform
-depositDate                             |date                |False       |Business date the merchant should receive deposit.
-netDepositAmount                        |decimal             |False       |Amount after chargebacks, credits, and daily fees are removed but prior to other withheld amounts.
-actualDepositAmount                     |decimal             |False       |Amount actually deposited to the merchant account.
+disbursementDate                        |date                |False       |Business date the merchant should receive deposit.
+netDisbursementAmount                   |decimal             |False       |Amount after chargebacks, credits, and daily fees are removed but prior to other withheld amounts.
+actualDisbursementAmount                |decimal             |False       |Amount actually deposited to the merchant account.
 settledAmount                           |decimal             |False       |Amount settled/paid to the merchant.
 nonSettledAmount                        |decimal             |True        |Amount not paid to the merchant.  Activity in the batch that is not qualified for ACH.
 dailyFeeAmount                          |decimal             |True        |Amount of daily fees deducted from the merchant.
