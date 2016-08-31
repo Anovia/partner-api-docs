@@ -660,9 +660,12 @@ DELETE  |/webhooks/:id                          |remove a webhook subscription
 Name                                    |Type                |Allow Null  |Description
 ----------------------------------------|--------------------|------------|-------------
 id                                      |string(13)          |False       |The unique identifier of the webhook connection
-token                                   |string(30)          |False       |A token you can use to verify that the webhook message came from Anovia
-hook                                    |string(20)          |False       |The event you are subscribing to. Available Webhooks: <br/> leadStatus - receive a notification when a lead's status changes <br/> merchantStatus - recieve a notification when a merchant's status changes
 uri                                     |string(100)         |False       |The fully qualified URI on your server where webhook messages should be sent.
+token                                   |string(30)          |False       |A token you can use to verify that the webhook message came from Anovia
+model                                   |string(20)          |False       |The model you are subscribing to. Available Models: <br/> leads <br/> merchants
+event                                   |string(50)          |False       |The event you are subscribing to. Available Events: <br/> status
+value                                   |string(50)          |True        |The new value to filter by. To only receive webhooks when a lead's status is set to 'New', you would pass value: 'New'. <br/> To receive the webhook for all status changes, leave value null.
+legacy                                  |bool                |True        |Legacy support for pre-existing webhook schemas. **ONLY PASS THIS IF INSTRUCTED TO DO SO BY ANOVIA**
 
 > **NOTE:** For security purposes, all webhook uri's must be HTTPS
 
@@ -672,8 +675,10 @@ Example Lead Status Webhook Registration Request:
       data: {
         type: 'webhooks',
         attributes: {
-          hook: 'leadStatus',
-          uri: 'https://webhooks.yourdomain.com/anoviaLeadStatus'
+          model: 'leads',
+          event: 'status',
+          uri: 'https://webhooks.yourdomain.com/anoviaLeadStatus',
+          value: 'New'
         }
       }
     }
@@ -686,8 +691,10 @@ Example Lead Status Webhook Registration Response:
         type: 'webhooks',
         attributes: {
           token: 'RAM2342JEIOFEDK2393',
-          hook: 'leadStatus',
-          uri: 'https://webhooks.yourdomain.com/anoviaLeadStatus'
+          model: 'leads',
+          event: 'status',
+          uri: 'https://webhooks.yourdomain.com/anoviaLeadStatus',
+          value: 'New'
         }
       }
     }
@@ -698,9 +705,6 @@ Example Lead Status Webhook Message:
       meta: {
         token: 'RAM2342JEIOFEDK2393'
       },
-      links: {
-        self: 'api/v1/leads/3NQKBQ'
-      }
       data: {
         id: '3NQKBQ',
         type: 'leads',
@@ -726,9 +730,6 @@ Example Lead Status Webhook Message:
             tag2: 'val2',
             tag3: 'val3'
           }
-        },
-        links: {
-          self: 'api/v1/leads/3NQKBQ'
         }
       },
       jsonapi: {
