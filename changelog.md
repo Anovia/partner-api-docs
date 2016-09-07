@@ -5,3 +5,4 @@ Version  |Date          |Notes
 0.8.0    |08/18/2016    |Updated residual schema
 0.9.0    |08/25/2016    |Updated depositTotal routes. <br/> Added Product schema to Merchants. <br/> Added support for creating merchants directly on Payment Faciliation platform. <br/> Added Webhook documentation.
 0.10.0   |09/07/2016    |Removed non-settled from deposits
+0.11.0   |09/07/2016    |Update endpoints
