@@ -48,13 +48,13 @@ Anovia's Partner API is designed to provide a simple way for parters to access d
 
 Accessing your data is done via a partner specific subdomain on anoviapayments.com. Your relationship manager will provide you with your subdomain prior to launch.
 
-    <partnerName>.anoviapayments.com/api/v1
+    <partnerName>.anoviapay.com/api/v1
 
 ### Development Environment
 
 For development, we also provide a developer sandbox that can be accessed with your dev API keypair. Please see the section on Authentication for more details.
 
-    apiTest.anoviapayments.com/api/v1
+    <partnerName>.anoviadev.com/api/v1
 
 ---
 ## Versioning
