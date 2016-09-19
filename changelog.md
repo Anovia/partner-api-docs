@@ -6,3 +6,4 @@ Version  |Date          |Notes
 0.9.0    |08/25/2016    |Updated depositTotal routes. <br/> Added Product schema to Merchants. <br/> Added support for creating merchants directly on Payment Faciliation platform. <br/> Added Webhook documentation.
 0.10.0   |09/07/2016    |Removed non-settled from deposits
 0.11.0   |09/07/2016    |Update endpoints
+0.12.0   |09/08/2016    |Change channelName to channelCode, add channels endpoints. Updated Address Schema to change country to countryCode. Changed BankAccounts on merchants to an Array of accounts, as this will be possible in future configurations for full merchant accounts.
