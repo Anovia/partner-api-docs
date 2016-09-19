@@ -378,7 +378,7 @@ activatedDate                           |date                |True        |False
 deactivatedDate                         |date                |True        |False        |(YYYY-MM-DD) The date the merchant closed their account (hopefully this is null!)
 products                                |array               |True        |False        |List of products the merchant is using for accepting payemnts (terminals, gateways, etc). See Product Schema for details
 principals                              |array               |False       |True         |List of owners for the business. See Principal Schema for details
-bankAccount                             |bank account object |False       |True         |The bank account where funds will be deposited, and fees will be withdrawn
+bankAccount                             |array of bankaccts  |False       |True         |Limit 1 bank account for Sub-merchants created via the partner API. This should be the bank account where funds will be deposited, and fees will be withdrawn
 dbaAddress                              |address object      |False       |True         |The physical address of the business
 legalAddress                            |address object      |False       |True         |The registered legal address of the business entity
 
@@ -435,7 +435,7 @@ address2                                |string(50)          |True        |True 
 city                                    |string(50)          |True        |True         |
 state                                   |string(50)          |True        |True         |The two letter state/province abbreviation
 zip                                     |string(50)          |True        |True         |The postal code
-country                                 |string(50)          |True        |True         |The two letter country code (Either 'US' or 'CA')
+countryCode                             |string(50)          |True        |True         |The two letter country code (Either 'US' or 'CA')
 
 ## Residuals
 
