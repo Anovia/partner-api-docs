@@ -1,4 +1,4 @@
-# partner-api-docs v1.0.0
+# partner-api-docs v1.0.1
 Documentation for Anovia's REST API for partner lead submission, on boarding, and reporting.
 
 ---
@@ -120,7 +120,7 @@ To test authentication, you can submit a GET request to {{host}}/api. If you rec
 
 The Anovia API uses [JSONAPI](http://jsonapi.org) to format responses, as described below. Sample responses for each endpoint, as well as sample code for a variety of languages, are available via Postman.
 
-[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/7b0ee3c91ba0a64a8c59#?env%5BAnovia%20API%20Test.template%5D=W3sia2V5IjoiaG9zdCIsInZhbHVlIjoiIiwidHlwZSI6InRleHQiLCJlbmFibGVkIjp0cnVlfSx7ImtleSI6ImFwaV9rZXlfaWQiLCJ2YWx1ZSI6IiIsInR5cGUiOiJ0ZXh0IiwiZW5hYmxlZCI6dHJ1ZX0seyJrZXkiOiJhcGlfa2V5X3NlY3JldCIsInZhbHVlIjoiIiwidHlwZSI6InRleHQiLCJlbmFibGVkIjp0cnVlfSx7ImtleSI6ImJhc2U2NF9rZXlfcGFpciIsInZhbHVlIjoiIiwidHlwZSI6InRleHQiLCJlbmFibGVkIjp0cnVlfSx7ImtleSI6ImFjY2Vzc190b2tlbiIsInZhbHVlIjoiIiwidHlwZSI6InRleHQiLCJlbmFibGVkIjp0cnVlfSx7ImtleSI6ImxlYWRfaWQiLCJ2YWx1ZSI6IiIsInR5cGUiOiJ0ZXh0IiwiZW5hYmxlZCI6dHJ1ZX0seyJrZXkiOiJtZXJjaGFudF9pZCIsInZhbHVlIjoiIiwidHlwZSI6InRleHQiLCJlbmFibGVkIjp0cnVlfSx7ImtleSI6InJlc2lkdWFsX2lkIiwidmFsdWUiOiIiLCJ0eXBlIjoidGV4dCIsImVuYWJsZWQiOnRydWV9LHsia2V5Ijoic3RhdGVtZW50X2lkIiwidmFsdWUiOiIiLCJ0eXBlIjoidGV4dCIsImVuYWJsZWQiOnRydWV9LHsia2V5IjoiZGVwb3NpdF9pZCIsInZhbHVlIjoiIiwidHlwZSI6InRleHQiLCJlbmFibGVkIjp0cnVlfSx7ImtleSI6ImZlZV9pZCIsInZhbHVlIjoiIiwidHlwZSI6InRleHQiLCJlbmFibGVkIjp0cnVlfSx7ImtleSI6ImJhdGNoX2lkIiwidmFsdWUiOiIiLCJ0eXBlIjoidGV4dCIsImVuYWJsZWQiOnRydWV9LHsia2V5IjoidHJhbnNhY3Rpb25faWQiLCJ2YWx1ZSI6IiIsInR5cGUiOiJ0ZXh0IiwiZW5hYmxlZCI6dHJ1ZX1d)
+[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/11456e03603c82d52aff)
 
 
 
@@ -378,7 +378,7 @@ activatedDate                           |date                |True        |False
 deactivatedDate                         |date                |True        |False        |(YYYY-MM-DD) The date the merchant closed their account (hopefully this is null!)
 products                                |array               |True        |False        |List of products the merchant is using for accepting payemnts (terminals, gateways, etc). See Product Schema for details
 principals                              |array               |False       |True         |List of owners for the business. See Principal Schema for details
-bankAccount                             |array of bankaccts  |False       |True         |Limit 1 bank account for Sub-merchants created via the partner API. This should be the bank account where funds will be deposited, and fees will be withdrawn
+bankAccounts                            |array               |False       |True         |List of merchant bank accounts. Limit 1 bank account for Sub-merchants created via the partner API. This should be the bank account where funds will be deposited, and fees will be withdrawn
 dbaAddress                              |address object      |False       |True         |The physical address of the business
 legalAddress                            |address object      |False       |True         |The registered legal address of the business entity
 
