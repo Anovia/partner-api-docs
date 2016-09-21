@@ -1,4 +1,4 @@
-# partner-api-docs v0.9.0
+# partner-api-docs v1.0.0
 Documentation for Anovia's REST API for partner lead submission, on boarding, and reporting.
 
 ---
@@ -27,6 +27,7 @@ Documentation for Anovia's REST API for partner lead submission, on boarding, an
 - [Disbursements](#disbursements)
 - [Batches](#batches)
 - [Transactions](#transactions)
+- [Channels](#channels)
 
 [Sub-Doc Schemas](#sub-doc-schemas)
 
@@ -48,13 +49,13 @@ Anovia's Partner API is designed to provide a simple way for parters to access d
 
 Accessing your data is done via a partner specific subdomain on anoviapayments.com. Your relationship manager will provide you with your subdomain prior to launch.
 
-    <partnerName>.anoviapayments.com/api/v1
+    <partnerName>.anoviapay.com/api/v1
 
 ### Development Environment
 
 For development, we also provide a developer sandbox that can be accessed with your dev API keypair. Please see the section on Authentication for more details.
 
-    apiTest.anoviapayments.com/api/v1
+    <partnerName>.anoviadev.com/api/v1
 
 ---
 ## Versioning
@@ -119,7 +120,7 @@ To test authentication, you can submit a GET request to {{host}}/api. If you rec
 
 The Anovia API uses [JSONAPI](http://jsonapi.org) to format responses, as described below. Sample responses for each endpoint, as well as sample code for a variety of languages, are available via Postman.
 
-[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/7b0ee3c91ba0a64a8c59#?env%5BAnovia%20API%20Test.template%5D=W3sia2V5IjoiaG9zdCIsInZhbHVlIjoiIiwidHlwZSI6InRleHQiLCJlbmFibGVkIjp0cnVlfSx7ImtleSI6ImFwaV9rZXlfaWQiLCJ2YWx1ZSI6IiIsInR5cGUiOiJ0ZXh0IiwiZW5hYmxlZCI6dHJ1ZX0seyJrZXkiOiJhcGlfa2V5X3NlY3JldCIsInZhbHVlIjoiIiwidHlwZSI6InRleHQiLCJlbmFibGVkIjp0cnVlfSx7ImtleSI6ImJhc2U2NF9rZXlfcGFpciIsInZhbHVlIjoiIiwidHlwZSI6InRleHQiLCJlbmFibGVkIjp0cnVlfSx7ImtleSI6ImFjY2Vzc190b2tlbiIsInZhbHVlIjoiIiwidHlwZSI6InRleHQiLCJlbmFibGVkIjp0cnVlfSx7ImtleSI6ImxlYWRfaWQiLCJ2YWx1ZSI6IiIsInR5cGUiOiJ0ZXh0IiwiZW5hYmxlZCI6dHJ1ZX0seyJrZXkiOiJtZXJjaGFudF9pZCIsInZhbHVlIjoiIiwidHlwZSI6InRleHQiLCJlbmFibGVkIjp0cnVlfSx7ImtleSI6InJlc2lkdWFsX2lkIiwidmFsdWUiOiIiLCJ0eXBlIjoidGV4dCIsImVuYWJsZWQiOnRydWV9LHsia2V5Ijoic3RhdGVtZW50X2lkIiwidmFsdWUiOiIiLCJ0eXBlIjoidGV4dCIsImVuYWJsZWQiOnRydWV9LHsia2V5IjoiZGVwb3NpdF9pZCIsInZhbHVlIjoiIiwidHlwZSI6InRleHQiLCJlbmFibGVkIjp0cnVlfSx7ImtleSI6ImZlZV9pZCIsInZhbHVlIjoiIiwidHlwZSI6InRleHQiLCJlbmFibGVkIjp0cnVlfSx7ImtleSI6ImJhdGNoX2lkIiwidmFsdWUiOiIiLCJ0eXBlIjoidGV4dCIsImVuYWJsZWQiOnRydWV9LHsia2V5IjoidHJhbnNhY3Rpb25faWQiLCJ2YWx1ZSI6IiIsInR5cGUiOiJ0ZXh0IiwiZW5hYmxlZCI6dHJ1ZX1d)
+[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/11456e03603c82d52aff)
 
 
 
@@ -296,7 +297,7 @@ submitterName                           |string(140)         |True        |False
 submitterPhone                          |string(10)          |True        |False       |The phone number of the agent/employee who submitted the lead
 submitterPhoneExtension                 |string(8)           |True        |False       |The phone number extension of the agent/employee who submitted the lead
 submitterEmail                          |string(140)         |True        |False       |The email address of the agent/employee who submitted the lead
-channelName                             |string(36)          |False       |True        |The sales channel to which this lead should be added. Possible values will be provided to you by your relationship manager
+channelCode                             |string(36)          |False       |True        |The sales channel to which this lead should be added. Possible values will be provided to you by your relationship manager
 tags                                    |object              |True        |False       |JSON object containing key:value pairs for customizing your reporting. Tags will be copied to related merchants ONLY on creation of merchant record.
 tags.key                                |string(36)          |True        |False       |Key by which a tag can be referenced. Keys must be unique.
 tags.value                              |string(36)          |True        |False       |Value of an individual tag
@@ -364,7 +365,7 @@ processorName                           |string(20)          |True        |True 
 externalIdentifier                      |string(36)          |True        |False        |The identifier provided when you submitted the related Lead
 submitterIdentifier                     |string(36)          |True        |False        |The id you provided for tracking your agent/employee who submitted the merchant's Lead 
 countryCode                             |string(2)           |False       |True         |The two letter country code where the merchant transacts business<br>Values: <br>US<br>CA
-channelName                             |string(36)          |False       |True         |The sales channel you provided for the merchant's Lead
+channelCode                             |string(36)          |False       |True         |The sales channel you provided for the merchant's Lead
 tags                                    |object              |True        |False        |Object containing key:value pairs for customizing your reporting. Inherited from lead record.
 tags.key                                |string(36)          |True        |False        |Key by which a tag can be referenced
 tags.value                              |string(36)          |True        |False        |Value of an individual tag
@@ -377,7 +378,7 @@ activatedDate                           |date                |True        |False
 deactivatedDate                         |date                |True        |False        |(YYYY-MM-DD) The date the merchant closed their account (hopefully this is null!)
 products                                |array               |True        |False        |List of products the merchant is using for accepting payemnts (terminals, gateways, etc). See Product Schema for details
 principals                              |array               |False       |True         |List of owners for the business. See Principal Schema for details
-bankAccount                             |bank account object |False       |True         |The bank account where funds will be deposited, and fees will be withdrawn
+bankAccounts                            |array               |False       |True         |List of merchant bank accounts. Limit 1 bank account for Sub-merchants created via the partner API. This should be the bank account where funds will be deposited, and fees will be withdrawn
 dbaAddress                              |address object      |False       |True         |The physical address of the business
 legalAddress                            |address object      |False       |True         |The registered legal address of the business entity
 
@@ -434,7 +435,7 @@ address2                                |string(50)          |True        |True 
 city                                    |string(50)          |True        |True         |
 state                                   |string(50)          |True        |True         |The two letter state/province abbreviation
 zip                                     |string(50)          |True        |True         |The postal code
-country                                 |string(50)          |True        |True         |The two letter country code (Either 'US' or 'CA')
+countryCode                             |string(50)          |True        |True         |The two letter country code (Either 'US' or 'CA')
 
 ## Residuals
 
@@ -465,7 +466,7 @@ income                                  |decimal             |False       |The t
 adjustments                             |decimal             |False       |Adjustments made to correct errors in prior residual statements
 profit                                  |decimal             |False       |Income minus Expenses
 residualAmount                          |decimal             |False       |Net residual amount calculated based on agreed upon residual percentages/amounts
-channelName                             |string(36)          |False       |The sales channel you provided for the merchant's Lead
+channelCode                             |string(36)          |False       |The sales channel you provided for the merchant's Lead
 period                                  |int                 |False       |(YYYYMM) The year and month this residual pertains to
 
 ## Statements
@@ -551,7 +552,6 @@ depositDate                             |date                |False       |(YYYY
 routingNumber                           |string(9)           |True        |ABA number of merchants designated depository institution.
 accountNumber                           |string(40)          |True        |Settlement account designated by merchant at the depository institution.
 depositAmount                           |decimal             |False       |Dollar value of the merchant deposit.
-nonSettledAmount                        |decimal             |True        |The sum of sales that were processed in this deposit period, but not settled to the merchant's bank account. Example: AMEX ESA, 100% Reserve, MRA
 period                                  |int                 |False       |(YYYYMM) The year and month this deposit occurred
 
 ## Disbursements
@@ -640,6 +640,23 @@ terminalName                            |string(20)          |True        |A sho
 terminalIdentifier                      |string(20)          |True        |The id of the terminal used to process the transaction
 merchantIdentifier                      |string(128)         |True        |An identifier for this transaction from the merchant's POS system
 
+## Channels
+
+### Routes
+
+Method  |Route                                  |Description
+--------|---------------------------------------|-------------
+GET     |/channels                              |Returns a collection of channels
+GET     |/channels/:id                          |Returns a channel by it's id
+
+### Transaction Schema
+
+Name                                    |Type                |Allow Null  |Description
+----------------------------------------|--------------------|------------|-------------
+id                                      |string(13)          |False       |Anovia's unique identifier for channel records
+name                                    |string(50)          |False       |The full name of the channel
+code                                    |string(20)          |False       |The channel code. This is what will be used when submitting leads/merchants
+
 ---
 ## Webhooks
 
@@ -715,7 +732,7 @@ Example Lead Status Webhook Message:
           contactPhone: '5551231231',
           contactEmail: 'testme@email.com',
           countryCode: 'US',
-          channelName: 'SOMECHANNEL',
+          channelCode: 'SOMECHANNEL',
           externalIdentifier: 'YOUREXTID',
           receivedDate: '2016-08-21T21:31:20.907Z',
           signedDate: '2016-08-25T21:31:20.907Z',
