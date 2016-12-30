@@ -16,6 +16,8 @@ Documentation for Anovia's REST API for partner lead submission, on boarding, an
 
 [Errors](#errors)
 
+[File Upload](#file-upload)
+
 [Schemas](#schemas)
 
 - [Leads](#leads)
@@ -37,6 +39,7 @@ Documentation for Anovia's REST API for partner lead submission, on boarding, an
 - [Principal Schema](#principal-schema)
 - [Address Schema](#address-schema)
 - [Location Schema](#location-schema)
+- [Document Schema](#document-schema)
 
 [Webhooks](#webhooks)
 
@@ -252,6 +255,21 @@ Errors also adhere to the JSONAPI spec. Errors are returned as an array of JSON 
       ]
     }
 
+## File Upload
+
+When adding attachments to Leads and Applications, you should use a multi-part form post. 
+You can post up to 12 files in any given request. The max file size allowed is 10MB.
+
+    cURL Example:
+
+    curl -X POST 
+      -H "Authorization: Basic <base64_encoded_keypair>" 
+      -H "Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW" 
+      -H "Cache-Control: no-cache" 
+      -F "attachments=@/file1.png" 
+      -F "attachments=@/file2.png" 
+      "http://<yourdomain>.anoviadev.com/api/v1/leads/{{lead_id}}/attachments"
+
 The following HTTP Status Codes are utilized by the Anovia API:
 
 Status Code | Description           | Details                                                       
@@ -274,13 +292,14 @@ Status Code | Description           | Details
 
 Method | Route                | Description                                                                                                                                                                                                                                                                                                                                                                                                                                             
 ------ | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-POST   | /leads               | Create a new lead                                                                                                                                                                                                                                                                                                                                                                                                                                       
-GET    | /leads               | Returns a collection of leads                                                                                                                                                                                                                                                                                                                                                                                                                           
-GET    | /leads/:id           | Returns a lead by it's id                                                                                                                                                                                                                                                                                                                                                                                                                               
-GET    | /leads/:id/tags      | Returns a lead's tags object                                                                                                                                                                                                                                                                                                                                                                                                                            
-POST   | /leads/:id/tags      | Add tags to an existing lead. Tags with new keys will be added, tags with existing keys will be ignored.                                                                                                                                                                                                                                                                                                                                                
-PUT    | /leads/:id/tags      | Update a lead's tags. <br> **NOTE** PUT'ing tags will replace all tags for a lead, so when using PUT, send ALL tags that should exist for that lead. <br> All attributes outside of tags object will be ignored. When using PUT, existing tags will be updated, new tags will be added. Updates to merchant/lead tags are distinct operations, so if you want to update a lead's tags and it's merchants, you would need to make those calls separately.
-GET    | /leads/:id/merchants | Returns all merchants for a specific lead                                                                                                                                                                                                                                                                                                                                                                                                               
+POST   | /leads                    | Create a new lead                                                                                                                                                                                                                                                                                                                                                                                                                                       
+GET    | /leads                    | Returns a collection of leads                                                                                                                                                                                                                                                                                                                                                                                                                           
+GET    | /leads/:id                | Returns a lead by it's id                                                                                                                                                                                                                                                                                                                                                                                                                               
+GET    | /leads/:id/tags           | Returns a lead's tags object                                                                                                                                                                                                                                                                                                                                                                                                                            
+POST   | /leads/:id/tags           | Add tags to an existing lead. Tags with new keys will be added, tags with existing keys will be ignored.                                                                                                                                                                                                                                                                                                                                                
+PUT    | /leads/:id/tags           | Update a lead's tags. <br> **NOTE** PUT'ing tags will replace all tags for a lead, so when using PUT, send ALL tags that should exist for that lead. <br> All attributes outside of tags object will be ignored. When using PUT, existing tags will be updated, new tags will be added. Updates to merchant/lead tags are distinct operations, so if you want to update a lead's tags and it's merchants, you would need to make those calls separately.
+GET    | /leads/:id/merchants      | Returns all merchants for a specific lead                                                                                                                                                                                                                                                                                                                                                                                                               
+POST   | /leads/:id/attachments    | Add attachments to an existing lead. 
 
 ### Lead Schema
 
@@ -308,6 +327,7 @@ receivedDate            | date        | False      | -        | (YYYY-MM-DD) The
 signedDate              | date        | True       | -        | (YYYY-MM-DD) The date the lead signed their processing agreement                                                                                    
 lostDate                | date        | True       | -        | (YYYY-MM-DD) THe date the lead was lost (hopefully this is null!)                                                                                   
 countryCode             | string(2)   | False      | True     | The country the business is located in. <br>Values: <br>US<br>CA                                                                                    
+attachments             | array       | True       | False    | Array of documents submitted with the lead. See Document Schema for reference
 
 ## Lead Statuses
 
@@ -339,6 +359,7 @@ GET    | /applications                    | Returns a collection of applications
 GET    | /applications/:id                | Returns a application by it's id    
 PUT    | /applications/:id                | Update an existing application record
 POST   | /applications/:id/actions/submit | Submit an application to underwriting
+POST   | /applications/:id/attachments    | Add attachments to an existing application
 
 ### Application Schema
 
@@ -371,6 +392,7 @@ principals               | array          | False      | True     | List of owne
 bankAccounts             | array          | False      | True     | List of merchant bank accounts. Limit 1 bank account for Sub-merchants created via the partner API. This should be the bank account where funds will be deposited, and fees will be withdrawn       
 legalAddress             | address object | False      | True     | The registered legal address of the business entity
 locations                | array          | False      | True     | List of business locations for this merchant. Every application will have at least one location. See Location Schema for details.                                                                                                       
+attachments              | array       | True       | False    | Array of documents submitted with the lead. See Document Schema for reference
 
 ## Merchants
 
@@ -491,6 +513,20 @@ dbaName                  | string(140)    | False      | True     | The Doing Bu
 dbaAddress               | address object | False      | True     | The physical address of this business location
 merchant                 | string(13)     | True       | False    | The id of the related merchant    
 products                 | array          | True       | False    | List of products the location is requesting
+
+### Document Schema
+
+Name                     | Type           | Allow Null | Required | Description                                                                                                                          
+------------------------ | -------------- | ---------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------
+id                       | string(13)     | False      | False    | Anovia's unique identifier for location records
+name                     | string(140)    | False      | False    | The name of the document that was uploaded, including the file extension
+blob                     | string(140)    | False      | False    | The storage path of the document
+encoding                 | string(13)     | False      | False    | The encoding used for storage
+size                     | number         | False      | False    | The size in bytes of the uploaded document
+mimetype                 | string(40)     | False      | False    | The mimetype the document was determined to be
+createdBy                | string(40)     | False      | False    | The name of the user who uploaded the document
+createdDate              | date           | False      | False    | The date the document was created                                                                                                                                               
+modifiedDate             | date           | False      | False    | The date the document was last modified                                                                                                                                               
 
 ## Residuals
 
