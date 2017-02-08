@@ -1,4 +1,4 @@
-# partner-api-docs v1.0.1
+# partner-api-docs v1.2.0
 Documentation for Anovia's REST API for partner lead submission, on boarding, and reporting.
 
 ---
@@ -399,6 +399,7 @@ Name                                    |Type                |Allow Null  |Requi
 id                                      |string(13)          |False       |False        |Anovia's unique identifier for merchant records
 mid                                     |string(20)          |True        |False        |Processing platform's ID for this merchant account
 lead                                    |string(13)          |False       |False        |The id of the related lead
+application                             |string(13)          |False       |False        |The id of the related application
 dbaName                                 |string(140)         |False       |True         |The Doing Business As name for this merchant
 legalName                               |string(140)         |False       |True         |The name of the legal entity for this business, as it appears on tax filing documents
 federalTaxId                            |string(9)           |False       |True         |The Federal Tax ID for this business. If ownership type is Sole Proprietor, this will be the Sole Proprietor's Social Security Number
