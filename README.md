@@ -19,6 +19,7 @@ Documentation for Anovia's REST API for partner lead submission, on boarding, an
 [Schemas](#schemas)
 
 - [Leads](#leads)
+- [Applications](#applications)
 - [Merchants](#merchants)
 - [Residuals](#residuals)
 - [Statements](#statements)
@@ -33,8 +34,9 @@ Documentation for Anovia's REST API for partner lead submission, on boarding, an
 
 - [Product Schema](#product-schema)
 - [Bank Account Schema](#bank-account-schema)
-- [Principal Schema](#principal-schema)
+- [Applicant Schema](#applicant-schema)
 - [Address Schema](#address-schema)
+- [Location Schema](#location-schema)
 
 [Webhooks](#webhooks)
 
@@ -307,7 +309,7 @@ signedDate                              |date                |True        |-    
 lostDate                                |date                |True        |-           |(YYYY-MM-DD) THe date the lead was lost (hopefully this is null!)
 countryCode                             |string(2)           |False       |True        |The country the business is located in. <br>Values: <br>US<br>CA
 
-## Lead Statuses
+### Lead Statuses
 
 A lead's status should give you a general idea of where the lead is in the sales process. Please keep in mind that the status of a lead is fluid. 
 It can change rapidly, and changes are not always linear. For instance, a lead can be statused as 'Lost', and then return to 'Contact in Progress'
@@ -326,11 +328,52 @@ Signed                |The merchant has signed the agreement, deal has been subm
 Lost                  |The merchant has decided not to process payments with Anovia
 eSig Exceptions       |A processing agreement was sent to the merchant for signature, but there is currently an error during the signing process
 
+## Applications
+
+> Note: creating new applications is reserved for parters on our Payment Facilitation platform. Unlike traditional merchant accounts, these accounts (elsewhere referred to as 'sub-merchants',
+have pre-determined pricing and product configuration, as well as an executed agreement.)
+
+### Application Routes
+
+Method  |Route                                  |Description
+--------|---------------------------------------|-------------
+POST    |/applications                             |Create a new merchant, for ProPay sub-merchants only.
+GET     |/applications                             |Returns a collection of applications
+GET     |/applications/:id                         |Returns a merchant by it's id
+
+### Application Schema
+
+Name                     | Type           | Allow Null | Required | Description                                                                                                                          
+------------------------ | -------------- | ---------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------
+id                       | string(13)     | False      | False    | Anovia's unique identifier for application records                                                                                   
+lead                     | string(13)     | False      | False    | The id of the related lead                                                                                                           
+legalName                | string(140)    | False      | True     | The name of the legal entity for this business                                                                                       
+federalTaxId             | string(9)      | False      | True     | The Federal Tax ID for this business. If ownership type is Sole Proprietor, this will be the Sole Proprietor's Social Security Number
+ownershipType            | string(40)     | False      | True     | The ownership type that describes how the business is registred <br/> Values: <br/> Sole Proprietor                                            
+acceptTermsAndConditions | bool           | False      | True     | Should be set to true when merchant agrees to terms and conditions of the contract                                                   
+processorName            | string(20)     | True       | True     | The name of the processing platform (Either 'TSYS' or 'ProPay')                                                                      
+externalIdentifier       | string(36)     | True       | False    | The identifier provided when you submitted the related Lead                                                                          
+submitterIdentifier      | string(36)     | True       | False    | The id you provided for tracking your agent/employee who submitted the merchant's Lead                                               
+countryCode              | string(2)      | False      | True     | The two letter country code where the merchant transacts business <br/> Values: <br/> US <br/> CA                                                     
+channelCode              | string(36)     | False      | True     | The sales channel you provided for the merchant's Lead                                                                                                                                              
+tags                     | object         | True       | False    | Object containing key:value pairs for customizing your reporting. Inherited from lead record.                                                                                                       
+tags.key                 | string(36)     | True       | False    | Key by which a tag can be referenced                                                                                                                                                                
+tags.value               | string(36)     | True       | False    | Value of an individual tag                                                                                                                                                                           
+createdDate              | date           | False      | False    | (YYYY-MM-DD) The date the application record was created
+modifiedDate             | date           | False      | False    | (YYYY-MM-DD) The date the application record was last modified
+signedDate               | date           | True       | False    | (YYYY-MM-DD) The date the application was signed                                                                                                                                         
+approvedDate             | date           | True       | False    | (YYYY-MM-DD) The date the application was approved by underwriting                                                                                                                                     
+declinedDate             | date           | True       | False    | (YYYY-MM-DD) The date the application was declined
+declinedReason           | string(40)     | True       | False    | The reason the application was declined by underwriting
+withdrawnDate            | date           | True       | False    | (YYYY-MM-DD) The application was withdrawn at the applicant's request                                                                                                                               
+withdrawnReason          | string(40)     | True       | False    | The stated reason the application was withdrawn by the applicant
+deactivatedDate          | date           | True       | False    | (YYYY-MM-DD) The date the merchant closed their account (hopefully this is null!)                                                                                                                                                      
+applicants               | array          | False      | True     | List of owners for the business. See Applicant Schema for details                                                                                                                                   
+bankAccounts             | array          | False      | True     | List of merchant bank accounts. Limit 1 bank account for Sub-merchants created via the partner API. This should be the bank account where funds will be deposited, and fees will be withdrawn       
+legalAddress             | address object | False      | True     | The registered legal address of the business entity
+locations                | array          | False      | True     | List of business locations for this merchant. Every application will have at least one location. See Location Schema for details.
 
 ## Merchants
-
-> Note: creating new merchants is reserved for parters on our Payment Facilitation platform. Unlike traditional merchant accounts, these accounts (elsewhere referred to as 'sub-merchants',
-have pre-determined pricing and product configuration, as well as an executed agreement.)
 
 ### Merchant Routes
 
@@ -377,7 +420,7 @@ boardedDate                             |date                |True        |False
 activatedDate                           |date                |True        |False        |(YYYY-MM-DD) The date the merchant processed their first transaction
 deactivatedDate                         |date                |True        |False        |(YYYY-MM-DD) The date the merchant closed their account (hopefully this is null!)
 products                                |array               |True        |False        |List of products the merchant is using for accepting payemnts (terminals, gateways, etc). See Product Schema for details
-principals                              |array               |False       |True         |List of owners for the business. See Principal Schema for details
+principals                              |array               |False       |True         |List of owners for the business. These are the applicants that you submitted with the application. See Applicant Schema for details
 bankAccounts                            |array               |False       |True         |List of merchant bank accounts. Limit 1 bank account for Sub-merchants created via the partner API. This should be the bank account where funds will be deposited, and fees will be withdrawn
 dbaAddress                              |address object      |False       |True         |The physical address of the business
 legalAddress                            |address object      |False       |True         |The registered legal address of the business entity
@@ -415,17 +458,17 @@ accountNumber                           |object              |True        |True 
 accountType                             |string(50)          |True        |True         |Either 'Checking' or 'Savings'
 accountName                             |string(50)          |True        |True         |The name of the account holder (either the business name or individual's name that owns the account)
 
-### Principal Schema
+### Applicant Schema
 Name                                    |Type                |Allow Null  |Required     |Description
 ----------------------------------------|--------------------|------------|-------------|-------------
-firstName                               |string(50)          |True        |True         |The first name of the principal
-lastName                                |string(50)          |True        |True         |The last name of the principal
-ownershipPercentage                     |int                 |True        |True         |The percentage of the business this principal owns. 60% ownership would be passed as 60
+firstName                               |string(50)          |True        |True         |The first name of the Applicant
+lastName                                |string(50)          |True        |True         |The last name of the Applicant
+ownershipPercentage                     |int                 |True        |True         |The percentage of the business this Applicant owns. 60% ownership would be passed as 60
 dob                                     |string(10)          |True        |True         |YYYY-MM-DD date of birth
-ssn                                     |string(50)          |True        |True         |The social security number of the principal
-email                                   |string(50)          |True        |True         |The personal email address of the principal
-phone                                   |string(10)          |True        |True         |The home phone number of the principal (numeric only)
-homeAddress                             |address object      |True        |True         |The home address of the principal
+ssn                                     |string(50)          |True        |True         |The social security number of the Applicant
+email                                   |string(50)          |True        |True         |The personal email address of the Applicant
+phone                                   |string(10)          |True        |True         |The home phone number of the Applicant (numeric only)
+homeAddress                             |address object      |True        |True         |The home address of the Applicant
 
 ### Address Schema
 Name                                    |Type                |Allow Null  |Required     |Description
@@ -686,73 +729,13 @@ legacy                                  |bool                |True        |Legac
 
 > **NOTE:** For security purposes, all webhook uri's must be HTTPS
 
-Example Lead Status Webhook Registration Request:
+### Webhook Samples
 
-    {
-      data: {
-        type: 'webhooks',
-        attributes: {
-          model: 'leads',
-          event: 'status',
-          uri: 'https://webhooks.yourdomain.com/anoviaLeadStatus',
-          value: 'New'
-        }
-      }
-    }
+[Lead Sample](/webhooks/leads.md)
 
-Example Lead Status Webhook Registration Response:
+[Application Sample](/webhooks/applications.md)
 
-    {
-      data: {
-        id: 'LLKFWIJLKDF2342039',
-        type: 'webhooks',
-        attributes: {
-          token: 'RAM2342JEIOFEDK2393',
-          model: 'leads',
-          event: 'status',
-          uri: 'https://webhooks.yourdomain.com/anoviaLeadStatus',
-          value: 'New'
-        }
-      }
-    }
-
-Example Lead Status Webhook Message:
-
-    {
-      meta: {
-        token: 'RAM2342JEIOFEDK2393'
-      },
-      data: {
-        id: '3NQKBQ',
-        type: 'leads',
-        attributes: {
-          bestTimeToContact: 'mornings',
-          businessName: 'Test Merchant Creation 3',
-          contactName: 'Contact Name',
-          contactPhone: '5551231231',
-          contactEmail: 'testme@email.com',
-          countryCode: 'US',
-          channelCode: 'SOMECHANNEL',
-          externalIdentifier: 'YOUREXTID',
-          receivedDate: '2016-08-21T21:31:20.907Z',
-          signedDate: '2016-08-25T21:31:20.907Z',
-          lostDate: null,
-          status: 'Signed',
-          submitterIdentifier: '123901',
-          submitterName: 'Russell Westbrook',
-          submitterPhone: '5551234567',
-          submitterEmail: 'russell@okc.com',
-          tags: {
-            tag1: 'val1',
-            tag2: 'val2',
-            tag3: 'val3'
-          }
-        }
-      },
-      jsonapi: {
-        version: '1.0'
-      }
-    }
+[Merchant Sample](/webhooks/merchants.md)
 
 ---
 ## Query Syntax
