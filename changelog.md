@@ -10,3 +10,4 @@ Version  |Date          |Notes
 1.0.0    |09/19/2016    |1.0.0 Release
 1.0.1    |09/21/2016    |Fixed typo in Merchant.BankAccounts. Updated Postman collection link.
 1.1.0    |12/30/2016    |Added Applications endpoint. Added File Upload support for leads and applications
+1.2.0    |02/08/2016    |Added webhook samples for applications and merchants. Updated application.principals to application.applicants
